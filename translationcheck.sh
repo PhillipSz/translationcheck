@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Script to check for Launchpad Translation in German 
+# Uncomment/comment which function you would like to use
+# To do: 
 
-#To do: 
+# elementary os and Mint and Ubuntu(-Touch)
 
-#elementary os and Mint and Ubuntu(-Touch)
+checkelementary(){
 
 name=("granite" "maya" "noise" "pantheon-photos" "midori")
 namelenght="$[${#name[@]}-1]"
@@ -19,7 +21,7 @@ do
 	ut="$(echo "$dw" | head -n1 | egrep -o "[0-9]+")"
 
 	ns="$(echo "$dw" | tail -n1 | egrep -o "[0-9]+")"
-
+	
 	if [ "$ut" != "0" ]
 		then
 			echo "${name[$i]}:"
@@ -31,7 +33,7 @@ do
    
 	if [ "$ns" != "0" ]
 		then
-			if [ "$shown" == "1"]
+			if [ "$shown" == "1" ]
 				then
 					echo "$ns new suggestions"
 				else
@@ -40,3 +42,6 @@ do
 			fi
 	fi
 done
+}
+
+checkelementary
