@@ -1,20 +1,24 @@
 #!/bin/bash
 
-# Script to check for Launchpad Translation in German 
+# Script to check for Launchpad Translation
 # Uncomment/comment which function you would like to use
+#
 # To do: 
+# - automaticly open in browser
 
-# elementary os and Mint and Ubuntu(-Touch)
+# curently only elementary os works!
 
 checkelementary(){
 
-name=("granite" "maya" "noise" "pantheon-photos" "midori")
+lang="German" #change to your need
+
+name=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
 namelenght="$[${#name[@]}-1]"
 
 for i in `seq 0 $namelenght`
 do
 
-	dw="$(wget -q -O- https://translations.launchpad.net/${name[$i]}/ | grep -A 30 '>German' | grep '<span class="sortkey">'| tail -n2)"
+	dw="$(wget -q -O- https://translations.launchpad.net/${name[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">'| tail -n2)"
 
 	#echo "$dw"
 
