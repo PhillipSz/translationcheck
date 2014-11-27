@@ -15,12 +15,10 @@ lang="German" #change to your need
 name=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
 namelenght="$[${#name[@]}-1]"
 
-for i in `seq 0 $namelenght`
+for i in $(seq 0 $namelenght)
 do
 
 	dw="$(wget -q -O- https://translations.launchpad.net/${name[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">'| tail -n2)"
-
-	#echo "$dw"
 
 	ut="$(echo "$dw" | head -n1 | egrep -o "[0-9]+")"
 
