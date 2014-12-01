@@ -3,13 +3,13 @@
 # Script to check for Launchpad Translation
 # Uncomment/comment which function you would like to use
 #
-# Todo: - check if the input from launchpad really is a number; if not exit 1
+# Todo: - ask user on frist run and then write a .config
 # 
 # curently only elementary os apps works!
 
 checkelementary(){
 
-lang="German" # change to your need
+lang="German" # change to your need; 
 openut=1 # set to 1 to open all untranslated apps in a browser, 0 to only show
 openns=1 # set to 1 to open all strings that needs review in a browser, 0 to only show
 name=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
@@ -31,7 +31,7 @@ for i in $(seq 0 $namelength); do
 
 	ns="$(echo "$dw" | tail -n1 | egrep -o "[0-9]+")" # ns = needs review
 	
-	if [[ "$ut" =~ [0-9]+ ]] && [[ "$ns" =~ [0-9]+ ]]; then 
+	if [[ "$ut" =~ [0-9]+ && "$ns" =~ [0-9]+ ]]; then 
 		
 		if (( "$ut" != "0" )); then
 			
@@ -65,7 +65,8 @@ for i in $(seq 0 $namelength); do
 	opened=0
 	
 	else
-		echo "we have a problem!"
+		echo "We have a problem!"
+		echo "name = ${name[$i]}; ut = $ut; ns = $ns"
 		exit 1
 fi
 done
