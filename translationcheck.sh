@@ -7,17 +7,25 @@
 # 
 # curently only elementary os apps works!
 
-checkelementary(){
-
-lang="German" # change to your need; 
+lang="German" # change to your need; e.g.: "French" or "Greek"
 openut=1 # set to 1 to open all untranslated apps in a browser, 0 to only show
 openns=1 # set to 1 to open all strings that needs review in a browser, 0 to only show
-name=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
+
+nameselementary=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
+
+namesubuntu=("ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "curucu" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
+
+checktranslations(){
 
 # start script
 # arrays starts with 0 
 #
-namelength="$((${#name[@]} -1))"
+echo "$1"
+
+names=("${$nameselementary[*]}") # now replace nameselementary with  a $1
+echo ${names[*]}
+
+namelength="$((${#nameselementary[@]} -1))"
 
 # just to not be influenced by an env var
 shown="" 
@@ -25,7 +33,7 @@ opened=""
 
 for i in $(seq 0 $namelength); do
 
-	dw="$(wget -q -O- https://translations.launchpad.net/${name[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">'| tail -n2)"
+	dw="$(wget -q -O- https://translations.launchpad.net/${nameselementary[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">'| tail -n2)"
 
 	ut="$(echo "$dw" | head -n1 | egrep -o "[0-9]+")" # ut = untranslated
 
@@ -35,13 +43,13 @@ for i in $(seq 0 $namelength); do
 		
 		if (( "$ut" != "0" )); then
 			
-			echo "${name[$i]}:"
+			echo "${nameselementary[$i]}:"
 			shown=1
 			echo "$ut untranslated"
 		
 			if (( "$openut" == "1" )); then 
 					
-				xdg-open https://translations.launchpad.net/${name[$i]}/ 2> /dev/null
+				xdg-open https://translations.launchpad.net/${nameselementary[$i]}/ 2> /dev/null # don't show error
 				opened=1			
 			fi
 			else
@@ -51,13 +59,13 @@ for i in $(seq 0 $namelength); do
 		if (( "$ns" != "0" )); then
 
 			if (( "$openns" == "1" )) && (( "$opened" != "1" )); then 
-				xdg-open https://translations.launchpad.net/${name[$i]}/ 2> /dev/null
+				xdg-open https://translations.launchpad.net/${nameselementary[$i]}/ 2> /dev/null
 			fi
 
 			if (( "$shown" == "1" )); then
 				echo "$ns new suggestions"
 			else
-				echo "${name[$i]}:"
+				echo "${nameselementary[$i]}:"
 				echo "$ns new suggestions"
 			fi
 		fi
@@ -66,10 +74,10 @@ for i in $(seq 0 $namelength); do
 	
 	else
 		echo "We have a problem!"
-		echo "name = ${name[$i]}; ut = $ut; ns = $ns"
+		echo "name = ${nameselementary[$i]}; ut = $ut; ns = $ns"
 		exit 1
 fi
 done
 }
 
-checkelementary
+checktranslations nameselementary
