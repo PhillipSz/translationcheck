@@ -17,18 +17,13 @@ namesubuntu=("ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-
 
 checktranslations(){
 
-echo "$1"
-# its not possible to replace a array name with a varibale
-#names=("${nameselementary[@]}") # now replace nameselementary with  a $1
-#names="${!1}" 
-#names=("${!1[@]}")
-#echo ${!1[@]}
-
-if (( "$1" == "elementary" )); then
-
 # start script
 # arrays starts with 0 
 #
+echo "$1"
+
+names=("${$nameselementary[*]}") # now replace nameselementary with  a $1
+echo ${names[*]}
 
 namelength="$((${#nameselementary[@]} -1))"
 
@@ -83,11 +78,6 @@ for i in $(seq 0 $namelength); do
 		exit 1
 fi
 done
-
-else if (()); then
-
-fi
-
 }
 
-checktranslations elementary # choose elementary or ubuntu-touch
+checktranslations nameselementary
