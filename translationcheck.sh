@@ -9,8 +9,8 @@
 
 
 lang="German" # change to your need, e.g.: "French" or "Greek"
-openut=1 # set to 1 to open all untranslated apps in a browser, 0 to only show
-openns=1 # set to 1 to open all strings that needs review in a browser, 0 to only show
+openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
+openns="0" # set to 1 to open all strings that needs review in a browser, 0 to only show
 
 nameselementary=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
 namesubuntu=("ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "curucu" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
@@ -36,28 +36,28 @@ for i in $(seq 0 $namelength); do
 	
 	if [[ "$ut" =~ [0-9]+ && "$ns" =~ [0-9]+ ]]; then 
 		
-		if (( "$ut" != "0" )); then
+		if [[ "$ut" != "0" ]]; then
 			
 			echo "${nameselementary[$i]}:"
 			shown=1
 			echo "$ut untranslated"
 		
-			if (( "$openut" == "1" )); then 
+			if [[ "$openut" == "1" ]]; then 
 					
 				xdg-open https://translations.launchpad.net/${nameselementary[$i]}/ 2> /dev/null
-				opened=1			
+				opened="1"			
 			fi
 			else
-				shown=0
+				shown="0"
 			fi
    
-		if (( "$ns" != "0" )); then
+		if [[ "$ns" != "0" ]]; then
 
-			if (( "$openns" == "1" )) && (( "$opened" != "1" )); then 
+			if [[ "$openns" == "1" ]] && [[ "$opened" != "1" ]]; then 
 				xdg-open https://translations.launchpad.net/${nameselementary[$i]}/ 2> /dev/null
 			fi
 
-			if (( "$shown" == "1" )); then
+			if [[ "$shown" == "1" ]]; then
 				echo "$ns new suggestions"
 			else
 				echo "${nameselementary[$i]}:"
@@ -65,7 +65,7 @@ for i in $(seq 0 $namelength); do
 			fi
 		fi
 	
-	opened=0
+	opened="0"
 	
 	else
 		echo "We have a problem!"
@@ -98,28 +98,28 @@ for i in $(seq 0 $namelength); do
 	
 	if [[ "$ut" =~ [0-9]+ && "$ns" =~ [0-9]+ ]]; then 
 		
-		if (( "$ut" != "0" )); then
+		if [[ "$ut" != "0" ]]; then
 			
 			echo "${namesubuntu[$i]}:"
 			shown=1
 			echo "$ut untranslated"
 		
-			if (( "$openut" == "1" )); then 
+			if [[ "$openut" == "1" ]]; then 
 					
 				xdg-open https://translations.launchpad.net/${namesubuntu[$i]}/ 2> /dev/null
-				opened=1			
+				opened="1"			
 			fi
 			else
-				shown=0
+				shown="0"
 			fi
    
-		if (( "$ns" != "0" )); then
+		if [[ "$ns" != "0" ]]; then
 
-			if (( "$openns" == "1" )) && (( "$opened" != "1" )); then 
+			if [[ "$openns" == "1" ]] && [[ "$opened" != "1" ]]; then 
 				xdg-open https://translations.launchpad.net/${namesubuntu[$i]}/ 2> /dev/null
 			fi
 
-			if (( "$shown" == "1" )); then
+			if [[ "$shown" == "1" ]]; then
 				echo "$ns new suggestions"
 			else
 				echo "${namesubuntu[$i]}:"
@@ -127,7 +127,7 @@ for i in $(seq 0 $namelength); do
 			fi
 		fi
 	
-	opened=0
+	opened="0"
 	
 	else
 		echo "We have a problem!"
@@ -137,5 +137,5 @@ fi
 done
 }
 
-checkelementary
+#checkelementary
 checkubuntu
