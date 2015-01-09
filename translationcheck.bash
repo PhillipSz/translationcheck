@@ -9,13 +9,13 @@
 
 lang="German" # change this to your needs, e.g.: "French" or "Greek"
 
-openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
-openns="0" # set to 1 to open all strings that needs review in a browser, 0 to only show
+openut="1" # set to 1 to open all untranslated apps in a browser, 0 to only show
+openns="1" # set to 1 to open all strings that needs review in a browser, 0 to only show
 
 checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so 
 checkelementary="1" # set to 1 to check elementary apps, 0 to not do so
 
-nameselementary=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "maya" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
+nameselementary=("noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
 namesubuntu=("ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "curucu" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
 
 checktranslations(){
@@ -74,7 +74,8 @@ for i in $(seq 0 $namelength); do
 			fi
 		fi
 	
-	opened="0"
+	opened="0" # clear vars for new loop round
+	shown=""
 	
 	else
 		echo "We have a problem!"
