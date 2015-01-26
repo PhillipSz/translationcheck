@@ -37,7 +37,7 @@ shown=""
 opened=""
 
 for ((i = 0; i <= namelength; i++)); do
-	dw="$( wget -q -O- https://translations.launchpad.net/${names[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
+	dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
 
 	# after || give an error when $ut or $ns = "" ( when grep dont find anything )
 
@@ -55,7 +55,7 @@ for ((i = 0; i <= namelength; i++)); do
 		
 		if [[ "$openut" == "1" ]]; then
 					
-			xdg-open https://translations.launchpad.net/${names[$i]}/ 2> /dev/null
+			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
 			opened="1"		
 		fi
 	else
@@ -65,7 +65,7 @@ for ((i = 0; i <= namelength; i++)); do
 	if [[ "$ns" != "0" ]]; then
 
 		if [[ "$openns" == "1" && "$opened" != "1" ]]; then
-			xdg-open https://translations.launchpad.net/${names[$i]}/ 2> /dev/null
+			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
 		fi
 
 		if [[ "$shown" == "1" ]]; then
