@@ -36,7 +36,7 @@ namelength="$((${#names[@]} -1))"
 shown="" 
 opened=""
 
-for i in $(seq 0 $namelength); do
+for ((i = 0; i <= namelength; i++)); do
 	dw="$( wget -q -O- https://translations.launchpad.net/${names[$i]}/ | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
 
 	# after || give an error when $ut or $ns = "" ( when grep dont find anything )
