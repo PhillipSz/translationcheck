@@ -1,8 +1,8 @@
 #!/bin/bash
-
+#
 # Script to check for Launchpad Translation
 #
-# Todo: - ask user on frist run and then write a .config or use options like ./translationcheck -a -v -f
+# TODO: - ask user on frist run and then write a .config or use options like ./translationcheck -a -v -f
 #
 # curently only elementary os apps and ubuntu-touch apps works!
 #
@@ -28,22 +28,22 @@ declare -n names="$1" # or use typeset, but it the same in bash; # we need names
 
 # How many programms we would like to check? (-1 because array start with 0)
  
-namelength="$((${#names[@]} -1))"
+local namelength="$((${#names[@]} -1))"
 
 # echo "$namelength"
 
 # just to not be influenced by an env var
-shown="" 
-opened=""
+local shown
+local opened
 
 for ((i = 0; i <= namelength; i++)); do
-	dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
+	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
 
 	# after || give an error when $ut or $ns = "" ( when grep dont find anything )
 
-	ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" || { echo "Input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ut = untranslated
+	local ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" || { echo "Input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ut = untranslated
 
-	ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" || { echo "input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ns = needs review
+	local ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" || { echo "input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ns = needs review
 
 	#echo "vars(${names[$i]}): $ut + $ns" # debugging
 	
@@ -76,13 +76,13 @@ for ((i = 0; i <= namelength; i++)); do
 		fi
 	fi
 	
-	opened="0" # clear vars for new loop round
-	shown=""
-	
+	# clear vars for new loop round
+	unset opened
+	unset shown
 done
 }
 
-# Todo: make this part not so static!
+# TODO: make this part not so static!
 
 if [[ "$checkubuntu" == "1" ]]; then
 	checktranslations namesubuntu
