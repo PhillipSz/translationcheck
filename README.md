@@ -1,7 +1,13 @@
 translationcheck for Launchpad
 ==============================
 
-Use "chmod +x translationcheck.bash" and then ./translationcheck.bash to run this script.
+Just run 
+	
+	git clone https://github.com/PhillipSz/translationcheck 
+
+and then 
+
+	bash translationcheck.bash
 
 All options are at the top in translationcheck.bash just change them there.
 
