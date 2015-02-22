@@ -38,8 +38,8 @@ echo -e "\b"
 local shown
 local opened
 local textbreak
-local red="\x1b[31;01m"
-local green="\x1b[32;01m"
+local red=$(tput setaf 1)
+local green=$(tput setaf 2)
 
 for ((i = 0; i <= namelength; i++)); do
 	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
