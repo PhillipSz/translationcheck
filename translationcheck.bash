@@ -32,9 +32,14 @@ local namelength="$((${#names[@]} -1))"
 
 # echo "$namelength"
 
+echo -e "\b"
+
 # just to not be influenced by an env var
 local shown
 local opened
+local textbreak
+local red="\x1b[31;01m"
+local green="\x1b[32;01m"
 
 for ((i = 0; i <= namelength; i++)); do
 	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
@@ -49,10 +54,11 @@ for ((i = 0; i <= namelength; i++)); do
 	
 	if [[ "$ut" != "0" ]]; then
 		
+		textbreak="1"
 		echo "${names[$i]}:"
 		shown="1"
-		echo "$ut untranslated"
-		
+		echo -e "$red""$ut untranslated"; tput sgr0
+
 		if [[ "$openut" == "1" ]]; then
 					
 			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
@@ -64,21 +70,27 @@ for ((i = 0; i <= namelength; i++)); do
    
 	if [[ "$ns" != "0" ]]; then
 
+		textbreak="1"
 		if [[ "$openns" == "1" && "$opened" != "1" ]]; then
 			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
 		fi
 
 		if [[ "$shown" == "1" ]]; then
-			echo "$ns new suggestions"
+			echo -e "$green""$ns new suggestions"; tput sgr0
 		else
 			echo "${names[$i]}:"
-			echo "$ns new suggestions"
+			echo -e "$green""$ns new suggestions"; tput sgr0
 		fi
 	fi
 	
+	if [[ "$textbreak" == "1" ]]; then
+		echo -e "\b"
+	fi
+
 	# clear vars for new loop round
 	unset opened
 	unset shown
+	unset textbreak
 done
 }
 
