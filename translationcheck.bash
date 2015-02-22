@@ -7,7 +7,7 @@
 # curently only elementary os apps and ubuntu-touch apps works!
 #
 
-lang="German" # change this to your needs, e.g.: "French" or "Greek"
+lang="German" # change this to your needs, e.g.: "French", "Greek", "English (United Kingdom)"
 
 openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
 openns="0" # set to 1 to open all strings that needs review in a browser, 0 to only show
@@ -37,7 +37,7 @@ local shown
 local opened
 
 for ((i = 0; i <= namelength; i++)); do
-	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang" | grep '<span class="sortkey">' | tail -n2 )"
+	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
 
 	# after || give an error when $ut or $ns = "" ( when grep dont find anything )
 
