@@ -2,8 +2,6 @@
 #
 # Script to check for Launchpad Translation
 #
-# TODO: - ask user on frist run and then write a .config or use options like ./translationcheck -a -v -f
-#
 # curently only elementary os apps and ubuntu-touch apps works!
 #
 
@@ -13,12 +11,25 @@ openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
 openns="0" # set to 1 to open all strings that needs review in a browser, 0 to only show
 
 checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so
-checkelementary="1" # set to 1 to check elementary apps, 0 to not do so
+checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
 
 nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
 namesubuntu=("ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "curucu" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
 
 # start script
+
+showhelp(){
+echo "Usage: translationcheck [-ueoh]"
+echo -e "\b"
+
+echo "-u,	check ubuntu apps"
+echo "-e,	check ubuntu apps"
+echo "-o,	open all untranslated/needs review apps in a browser"
+echo "-h,	give this help list"
+
+echo -e "\b"
+echo "Report bugs to https://github.com/PhillipSz/translationcheck/issues"
+}
 
 checktranslations(){
 
@@ -93,6 +104,70 @@ for ((i = 0; i <= namelength; i++)); do
 	unset textbreak
 done
 }
+
+# we can not use a function here
+
+while getopts ":ueoh" opt; do
+	case "$opt" in
+	u)
+		checkubuntu="1"
+		;;
+	e)
+		checkelementary="1"
+		;;
+	o)
+		openns="1"
+		openut="1"
+		;;
+	h)
+		showhelp
+		exit 0
+		;;
+	\?)
+		echo "Invalid option (use -h to display the help page): -$OPTARG" >&2
+		exit 1
+		;;
+	esac
+done
+
+
+# getopts: no --option
+# this code: no -cuh
+# we could also use http://mywiki.wooledge.org/BashFAQ/035
+#counter="$#"
+#
+#for ((i = 0; i <= counter; i++)); do
+#	case "$1" in
+#	-cu | --checkubuntu)
+#	  	checkubuntu="1"
+#	  	shift
+#	  	;;
+#      	-h | --help)
+#	  	showhelp
+#	  	exit 0
+#	  	;;
+#      	-ce | --checkelementary)
+#	  	checkelementary="1"
+#	  	shift
+#	  	;;
+#      	-o | --open)
+#	  	openns="1"
+#	  	openut="1"
+#	  	shift
+#	  	;;
+#      	--) # End of all options
+#	  	shift
+#	  	break
+#	 	;;
+#     	-*)
+#	  	echo "Error: Unknown option: $1" >&2
+#	  	exit 1
+#	  	;;
+#      	*)  # No more options
+#	  	break
+#	  	;;
+#    	esac
+#done
 
 # TODO: make this part not so static!
 
