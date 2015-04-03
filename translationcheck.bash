@@ -5,6 +5,8 @@
 # curently only elementary os apps and ubuntu-touch apps works!
 #
 
+shopt -s extglob # we need that later
+
 lang="German" # change this to your needs, e.g.: "French", "Greek", "English (United Kingdom)"
 
 openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
@@ -56,11 +58,15 @@ local green=$(tput setaf 2)
 for ((i = 0; i <= namelength; i++)); do
 	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
 
-	# after || give an error when $ut or $ns = "" ( when grep dont find anything )
+	local ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" # ut = untranslated
 
-	local ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" || { echo "Input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ut = untranslated
+	local ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" # ns = needs review
 
-	local ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" || { echo "input error! Debug: name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2; exit 1; } # ns = needs review
+	# lets check if that worked
+	if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
+		echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2
+		exit 1
+	fi
 
 	#echo "vars(${names[$i]}): $ut + $ns" # debugging
 	
