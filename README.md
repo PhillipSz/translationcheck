@@ -7,8 +7,10 @@ Just run
 
 and then 
 
-	bash translationcheck.bash
+	bash translationcheck.bash -h
 
-All options are at the top in translationcheck.bash just change them there.
+to see all options.
+Example:
 
+	bash translationcheck.bash -uel French
 Currently only elementary and ubuntu-touch apps are supported.

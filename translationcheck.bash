@@ -46,6 +46,7 @@ local namelength="$((${#names[@]} -1))"
 
 # echo "$namelength"
 
+echo "Let's what we have for $lang:"
 echo -e "\b"
 
 # just to not be influenced by an env var
