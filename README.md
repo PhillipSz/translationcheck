@@ -1,6 +1,6 @@
 translationcheck for Launchpad
 ==============================
-["Build Status", link="https://travis-ci.org/PhillipSz/translationcheck"]
+[![Build Status](https://travis-ci.org/PhillipSz/translationcheck.png)](https://travis-ci.org/PhillipSz/translationcheck)
 
 Just run 
 	

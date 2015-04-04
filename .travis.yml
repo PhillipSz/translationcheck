@@ -1,2 +1,2 @@
 language: bash
-script: bash translationcheck/tests/tests.bash
+script: ./tests/tests.bash
