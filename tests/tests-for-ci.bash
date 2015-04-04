@@ -4,3 +4,4 @@
 
 bash translationcheck.bash -uel "german" > /dev/null || { echo "error" >&2; exit 1; }
 echo "works!"
+bash --version
