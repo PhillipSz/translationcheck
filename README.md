@@ -15,4 +15,4 @@ Example:
 	bash translationcheck.bash -uel French
 
 sha256sum:
-1fb6301d4c004854a42faab5d5e79d41e6e66af0b2fb23d5fa648bc25bd50c85  translationcheck.bash
+be223255cb4d749a70895dc21776b17ff4ec5f48cf129234f7f55f34b6ccb557  translationcheck.bash
