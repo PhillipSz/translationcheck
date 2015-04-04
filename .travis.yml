@@ -1,2 +1,2 @@
 language: bash
-script: ./tests/tests.bash
+script: ./tests/tests-for-ci.bash
