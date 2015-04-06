@@ -53,15 +53,20 @@ echo -e "\b"
 local shown
 local opened
 local textbreak
-local red=$(tput setaf 1)
-local green=$(tput setaf 2)
+local red # declare these here, to be able to check the exit status; when we use var=$(..) # https://github.com/koalaman/shellcheck/wiki/SC2155
+local green
+local dw
+local ns
+local ut
+red=$(tput setaf 1)
+green=$(tput setaf 2)
 
 for ((i = 0; i <= namelength; i++)); do
-	local dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
+	dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
 
-	local ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" # ut = untranslated
+	ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" # ut = untranslated
 
-	local ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" # ns = needs review
+	ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" # ns = needs review
 
 	# lets check if that worked
 	if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
