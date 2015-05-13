@@ -2,6 +2,7 @@
 #
 # Script to check for Launchpad Translation
 #
+# TODO: check bugs on githubb
 # curently only elementary os apps and ubuntu-touch apps works!
 #
 
@@ -158,6 +159,7 @@ done
 # TODO: make this part not so static!
 
 if [[ "$checkubuntu" == "1" ]]; then
+	wget -q -O- https://translations.launchpad.net/ubuntu/wily/ >/dev/null && echo "New version wily is now translatable on launchpad!!! Update the script"
 	checktranslations namesubuntu
 fi
 
