@@ -47,8 +47,15 @@ local namelength="$((${#names[@]} -1))"
 
 # echo "$namelength"
 
-echo "Let's what we have for $lang:"
-echo -e "\b"
+# we must change this part if we have more the ubuntu and elementary!
+if [[ "$1" = "namesubuntu" ]]; then
+	echo "Let's see what we have for ubuntu in $lang:"
+	echo -e "\b"
+else
+	echo "Let's see what we have for elementary in $lang:"
+	echo -e "\b"
+
+fi
 
 # just to not be influenced by an env var
 local shown
@@ -159,7 +166,7 @@ done
 # TODO: make this part not so static!
 
 if [[ "$checkubuntu" == "1" ]]; then
-	wget -q -O- https://translations.launchpad.net/ubuntu/wily/ >/dev/null && echo "New version wily is now translatable on launchpad!!! Update the script"
+	wget -q -O- https://translations.launchpad.net/ubuntu/wily/ >/dev/null && echo "New version wily is now translatable on launchpad!!!"
 	checktranslations namesubuntu
 fi
 
