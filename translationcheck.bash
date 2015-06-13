@@ -2,10 +2,9 @@
 #
 # Script to check for Launchpad Translation
 #
-# TODO: check bugs on githubb
 # curently only elementary os apps and ubuntu-touch apps works!
 #
-
+clear
 shopt -s extglob # we need that later
 
 lang="German" # change this to your needs, e.g.: "French", "Greek", "English (United Kingdom)"
@@ -17,7 +16,7 @@ checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so
 checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
 
 nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori")
-namesubuntu=("ubuntu-docviewer-app" "ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "curucu" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
+namesubuntu=("ubuntu-docviewer-app" "ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
 
 # start script
 
@@ -26,7 +25,7 @@ echo "Usage: translationcheck [-ueoh] [-l language]"
 echo -e "\b"
 
 echo "-u,	check ubuntu apps"
-echo "-e,	check ubuntu apps"
+echo "-e,	check elementary apps"
 echo "-o,	open all untranslated/needs review apps in a browser"
 echo "-h,	give this help list"
 echo "-l, 	let you specify a language, e.g German, Greek or "English \(United Kingdom\)""
@@ -39,15 +38,17 @@ checktranslations(){
 
 # I use declare to be able to use a varibale as array name
 
-declare -n names="$1" # or use typeset, but it the same in bash; # we need namesubuntu or nameselementary as input here
+declare -n names="$1" # or use typeset, but it's the same in bash; # we need namesubuntu or nameselementary as input here
 
 # How many programms we would like to check? (-1 because array start with 0)
  
 local namelength="$((${#names[@]} -1))"
 
-# echo "$namelength"
+#echo "$namelength"
+# for a progress bar we need values to 100 not to $namelength
+local percent="$((100 / namelength))"
 
-# we must change this part if we have more the ubuntu and elementary!
+# we must change this part if we have more then ubuntu and elementary!
 if [[ "$1" = "namesubuntu" ]]; then
 	echo "Let's see what we have for ubuntu in $lang:"
 	echo -e "\b"
@@ -64,17 +65,19 @@ local textbreak
 local red # declare these here, to be able to check the exit status; when we use var=$(..) # https://github.com/koalaman/shellcheck/wiki/SC2155
 local green
 local dw
-local ns
-local ut
-red=$(tput setaf 1)
+local ns # ns = needs review
+local ut # ut = untranslated
+local c # c= counter
+c=0 # for the progress bar
+red=$(tput setaf 1) #colors
 green=$(tput setaf 2)
 
 for ((i = 0; i <= namelength; i++)); do
 	dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
 
-	ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )" # ut = untranslated
+	ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
 
-	ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )" # ns = needs review
+	ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
 
 	# lets check if that worked
 	if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
@@ -123,6 +126,11 @@ for ((i = 0; i <= namelength; i++)); do
 	unset opened
 	unset shown
 	unset textbreak
+
+# progress bar
+tput sc; tput cup 0 $(( $(tput cols) - 13)); printf "%3d%% complete" $c; tput rc
+((c += percent))
+
 done
 }
 
@@ -163,8 +171,6 @@ done
 # old style $1 and shift code:  we can add that, but its too long
 # we could also use http://mywiki.wooledge.org/BashFAQ/035
 
-# TODO: make this part not so static!
-
 if [[ "$checkubuntu" == "1" ]]; then
 	wget -q -O- https://translations.launchpad.net/ubuntu/wily/ >/dev/null && echo "New version wily is now translatable on launchpad!!!"
 	checktranslations namesubuntu
@@ -173,3 +179,5 @@ fi
 if [[ "$checkelementary" == "1" ]]; then
 	checktranslations nameselementary
 fi
+
+tput sc; tput cup 0 $(( $(tput cols) - 14)); echo -e "$(tput setaf 3)" "100% complete"; tput rc; tput sgr0
