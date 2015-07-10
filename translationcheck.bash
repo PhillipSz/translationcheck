@@ -172,7 +172,7 @@ done
 # we could also use http://mywiki.wooledge.org/BashFAQ/035
 
 if [[ "$checkubuntu" == "1" ]]; then
-	wget -q -O- https://translations.launchpad.net/ubuntu/wily/ >/dev/null && echo "New version wily is now translatable on launchpad!!!"
+	wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable on launchpad!!!"
 	checktranslations namesubuntu
 fi
 
