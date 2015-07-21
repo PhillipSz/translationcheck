@@ -16,7 +16,8 @@ checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so
 checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
 
 nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori" "wingpanel-indicator-notifications" "switchboard-plug-useraccounts" "wingpanel-indicator-power" "switchboard-plug-networking")
-namesubuntu=("ubuntu-docviewer-app" "ubuntu-system-settings" "ubuntu-rest-scopes" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "ubuntu-clock-app" "dialer-app" "sudoku-app" "ubuntu-rssreader-app" "ubuntu-calendar-app" "ubuntu-weather-app" "reminders-app" "unity8" "messaging-app" "indicator-network" "unity-scope-click" "camera-app" "unity-scope-mediascanner" "ubuntu-system-settings-online-accounts" "mediaplayer-app" "ubuntu-calculator-app" "notes-app" "unity-scope-scopes" "indicator-location" "telephony-service" "indicator-location")
+
+namesubuntu=("ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-click" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
 
 # start script
 
@@ -111,10 +112,10 @@ for ((i = 0; i <= namelength; i++)); do
 		fi
 
 		if [[ "$shown" == "1" ]]; then
-			echo -e "$green""$ns new suggestions"; tput sgr0
+			echo -e "$green""$ns new suggestion(s)"; tput sgr0
 		else
 			echo "${names[$i]}:"
-			echo -e "$green""$ns new suggestions"; tput sgr0
+			echo -e "$green""$ns new suggestion(s)"; tput sgr0
 		fi
 	fi
 	
