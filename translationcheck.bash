@@ -4,6 +4,7 @@
 #
 # curently only elementary os apps and ubuntu-touch apps works!
 #
+
 clear
 shopt -s extglob # we need that later
 
@@ -17,7 +18,7 @@ checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
 
 nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori" "wingpanel-indicator-notifications" "switchboard-plug-useraccounts" "wingpanel-indicator-power" "switchboard-plug-networking")
 
-namesubuntu=("ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-click" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
+namesubuntu=("ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-click" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
 
 # start script
 
@@ -49,14 +50,12 @@ local namelength="$((${#names[@]} -1))"
 # for a progress bar we need values to 100 not to $namelength
 local percent="$((100 / namelength))"
 
-# we must change this part if we have more then ubuntu and elementary!
-if [[ "$1" = "namesubuntu" ]]; then
+if [[ "$1" == "namesubuntu" ]]; then
 	echo "Let's see what we have for ubuntu in $lang:"
 	echo -e "\b"
-else
+elif [[ "$1" == "nameselementary" ]]; then
 	echo "Let's see what we have for elementary in $lang:"
 	echo -e "\b"
-
 fi
 
 # just to not be influenced by an env var
