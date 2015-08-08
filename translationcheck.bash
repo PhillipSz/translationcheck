@@ -47,8 +47,6 @@ declare -n names="$1" # or use typeset, but it's the same in bash; # we need nam
 local namelength="$((${#names[@]} -1))"
 
 #echo "$namelength"
-# for a progress bar we need values to 100 not to $namelength
-local percent="$((100 / namelength))"
 
 if [[ "$1" == "namesubuntu" ]]; then
 	echo "Let's see what we have for ubuntu in $lang:"
@@ -57,6 +55,7 @@ elif [[ "$1" == "nameselementary" ]]; then
 	echo "Let's see what we have for elementary in $lang:"
 	echo -e "\b"
 fi
+
 
 # just to not be influenced by an env var
 local shown
@@ -67,71 +66,73 @@ local green
 local dw
 local ns # ns = needs review
 local ut # ut = untranslated
-local c # c= counter
-c=0 # for the progress bar
-red=$(tput setaf 1) #colors
-green=$(tput setaf 2)
+
+local red=$(tput setaf 1) #colors
+local green=$(tput setaf 2)
 
 for ((i = 0; i <= namelength; i++)); do
-	dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
-
-	ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
-
-	ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
-
-	# lets check if that worked
-	if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
-		echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2
-		exit 1
-	fi
-
-	#echo "vars(${names[$i]}): $ut + $ns" # debugging
 	
-	if [[ "$ut" != "0" ]]; then
-		
-		textbreak="1"
-		echo "${names[$i]}:"
-		shown="1"
-		echo -e "$red""$ut untranslated"; tput sgr0
+	parallel (){
 
-		if [[ "$openut" == "1" ]]; then
-					
-			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
-			opened="1"		
-		fi
-	else
-		shown="0"
-	fi
-   
-	if [[ "$ns" != "0" ]]; then
+		dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
 
-		textbreak="1"
-		if [[ "$openns" == "1" && "$opened" != "1" ]]; then
-			xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
+		ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
+
+		ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
+
+		# lets check if that worked
+		if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
+			echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2
+			exit 1
 		fi
 
-		if [[ "$shown" == "1" ]]; then
-			echo -e "$green""$ns new suggestion(s)"; tput sgr0
-		else
+		#echo "vars(${names[$i]}): $ut + $ns" # debugging
+
+		if [[ "$ut" != "0" ]]; then
+			
+			textbreak="1"
 			echo "${names[$i]}:"
-			echo -e "$green""$ns new suggestion(s)"; tput sgr0
+			shown="1"
+			echo -e "$red""$ut untranslated"; tput sgr0
+
+			if [[ "$openut" == "1" ]]; then
+						
+				xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
+				opened="1"		
+			fi
+		else
+			shown="0"
 		fi
-	fi
-	
-	if [[ "$textbreak" == "1" ]]; then
-		echo -e "\b"
-	fi
 
-	# clear vars for new loop round
-	unset opened
-	unset shown
-	unset textbreak
+		if [[ "$ns" != "0" ]]; then
 
-# progress bar
-tput sc; tput cup 0 $(( $(tput cols) - 13)); printf "%3d%% complete" $c; tput rc
-((c += percent))
+			textbreak="1"
+			if [[ "$openns" == "1" && "$opened" != "1" ]]; then
+				xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
+			fi
 
+			if [[ "$shown" == "1" ]]; then
+				echo -e "$green""$ns new suggestion(s)"; tput sgr0
+			else
+				echo "${names[$i]}:"
+				echo -e "$green""$ns new suggestion(s)"; tput sgr0
+			fi
+		fi
+
+		if [[ "$textbreak" == "1" ]]; then
+			echo -e "\b"
+		fi
+		
+		# clear vars for new loop round
+		unset opened
+		unset shown
+		unset textbreak
+
+	}
+
+parallel &
 done
+wait # we must wait until all parallel's are done
 }
 
 # we can not use a function here
@@ -180,4 +181,4 @@ if [[ "$checkelementary" == "1" ]]; then
 	checktranslations nameselementary
 fi
 
-tput sc; tput cup 0 $(( $(tput cols) - 14)); echo -e "$(tput setaf 3)" "100% complete"; tput rc; tput sgr0
+#tput sc; tput cup 0 $(( $(tput cols) - 14)); echo -e "$(tput setaf 3)" "100% complete"; tput rc; tput sgr0
