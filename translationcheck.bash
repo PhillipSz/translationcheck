@@ -180,5 +180,3 @@ fi
 if [[ "$checkelementary" == "1" ]]; then
 	checktranslations nameselementary
 fi
-
-#tput sc; tput cup 0 $(( $(tput cols) - 14)); echo -e "$(tput setaf 3)" "100% complete"; tput rc; tput sgr0
