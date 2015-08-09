@@ -49,6 +49,7 @@ local namelength="$((${#names[@]} -1))"
 #echo "$namelength"
 
 if [[ "$1" == "namesubuntu" ]]; then
+	#wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable on launchpad!!!"
 	echo "Let's see what we have for ubuntu in $lang:"
 	echo -e "\b"
 elif [[ "$1" == "nameselementary" ]]; then
@@ -172,11 +173,10 @@ done
 # old style $1 and shift code:  we can add that, but its too long
 # we could also use http://mywiki.wooledge.org/BashFAQ/035
 
-if [[ "$checkubuntu" == "1" ]]; then
-	wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable on launchpad!!!"
+if [[ "$checkubuntu" == "1" && "$checkelementary" == "1" ]];then 
+	checktranslations namesubuntu; checktranslations nameselementary
+elif [[ "$checkubuntu" == "1" ]]; then 
 	checktranslations namesubuntu
-fi
-
-if [[ "$checkelementary" == "1" ]]; then
+elif [[ "$checkelementary" == "1" ]];then 
 	checktranslations nameselementary
 fi
