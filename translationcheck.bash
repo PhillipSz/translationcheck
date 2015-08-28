@@ -13,30 +13,38 @@ lang="German" # change this to your needs, e.g.: "French", "Greek", "English (Un
 
 openut="0" # set to 1 to open all untranslated apps in a browser, 0 to only show
 openns="0" # set to 1 to open all strings that needs review in a browser, 0 to only show
+projects=("unityscopes" "elementary" "ubuntu")
 
-checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so
-checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
-checknamesunityscopes="0"
+for i in "${projects[@]}"; do
+	mapfile -t "$i" <data/"$i"
+	#echo "$i:"; declare -n var=$i; echo "${var[@]}"
+done
 
-# To get these I used:
+checkupdate () {
+	local projects_update=("unityscopes" "elementary") projects_url=("unity-scopes" "elementary") # we can not update ubuntu
 
-#wget -q -O- https://translations.launchpad.net/unity-scopes 2> /dev/null | sed -e 's/(.)+Translatable projects//' -e 's/untranslatable-projects(.)+//' | grep -Eo '<a href="https://launchpad.net/(.)+\+translations"' | sed -e 's/<a href="https:\/\/launchpad.net\///' -e 's/\/+translations"//' -e 's/^/"/' -e 's/$/"/' | tr '\n' ' ' | sed -e 's/^/namesunityscopes=(/' -e 's/ $//' -e 's/$/)/'
+	for ((i = 0; i < ${#projects_url[@]}; i++)); do # ${#bla} will give us 2, but an array starts with 0
+		local projects_for_file=$(wget -q -O- https://translations.launchpad.net/"${projects_url[$i]}" 2> /dev/null | \
+		sed -rn '/Translatable projects/,/untranslatable-projects/ s/.*href="https:\/\/launchpad.net\/(.*)\/\+translations".*/\1/p')
 
-namesunityscopes=("unity-scope-devhelp" "unity-scope-ubuntushop" "unity-scope-wikipedia" "unity-scope-calculator" "unity-scope-grooveshark" "unity-scope-firefoxbookmarks" "unity-scope-zeitgeistwebhistory" "unity-scope-sciencedirect" "unity-scope-sshsearch" "unity-scope-evolution" "unity-scope-remmina" "unity-scope-gmusicbrowser" "unity-scope-deviantart" "unity-scope-github" "unity-scope-etsy" "unity-scope-askubuntu" "unity-scope-dribbble" "unity-scope-europeana" "unity-scope-soundcloud" "unity-scope-pubmed" "unity-scope-medicines" "unity-scope-tumblr" "unity-scope-googlescholar" "unity-scope-openweathermap" "unity-scope-clementine" "unity-scope-phpdoc" "unity-scope-chromiumbookmarks" "unity-scope-tomboy" "unity-scope-pypi" "unity-scope-calibre" "unity-scope-stackexchange" "unity-scope-launchpad" "unity-scope-yahoostock" "unity-scope-audacious" "unity-scope-nullege" "unity-scope-isgd" "unity-scope-foursquare" "unity-scope-colourlovers" "unity-scope-imdb" "unity-scope-songsterr" "unity-scope-virtualbox" "unity-scope-wikispecies" "unity-scope-click" "unity-scope-jstor" "unity-scope-yelpplaces" "unity-scope-googlebooks" "unity-scope-reddit" "unity-scope-recipepuppy" "unity-scope-mediascanner" "unity-scope-yelp" "unity-scope-songkick" "unity-scope-guayadeque" "unity-scope-scopes" "unity-scope-openclipart" "unity-scope-musique" "unity-scope-gourmet" "unity-scope-texdoc" "unity-scope-googlenews" "unity-scope-ebay" "unity-scope-gallica" "unity-scope-manpages" "unity-scope-zotero")
-
-nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori" "wingpanel-indicator-notifications" "switchboard-plug-useraccounts" "wingpanel-indicator-power" "switchboard-plug-networking" "plank")
-
-namesubuntu=("help-app" "ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
+		if [[ "$projects_for_file" =~ ([a-z]|-|[0-9])+ ]]; then 
+			echo "$projects_for_file" > data/"${projects_update[$i]}"
+		else 
+			echo "Ohh something is wrong with "${projects_update[$i]}!" Please report bugs to https://github.com/PhillipSz/translationcheck/issues"
+		fi
+	done
+}
 
 # start script
 
 showhelp(){
-echo "Usage: translationcheck [-ueoh] [-l language]"
+echo "Usage: translationcheck [-cueoh] [-l language]"
 echo -e "\b"
 
 echo "-u,	check ubuntu apps"
 echo "-e,	check elementary apps"
 echo "-o,	open all untranslated/needs review apps in a browser"
+echo "-c,	checks for new translatable apps from elementary/unity scopes and saves them"
 echo "-h,	give this help list"
 echo "-l, 	let you specify a language, e.g German, Greek or "English \(United Kingdom\)""
 echo "-s,	check unity scopes"
@@ -47,118 +55,114 @@ echo "Report bugs to https://github.com/PhillipSz/translationcheck/issues"
 
 checktranslations(){
 
-# I use declare to be able to use a varibale as array name
+	# I use declare to be able to use a varibale as array name
 
-declare -n names="$1" # or use typeset, but it's the same in bash; # we need names... as input here
+	declare -n names="$1" # or use typeset, but it's the same in bash; # we need names... as input here
 
-# How many programms we would like to check? (-1 because array start with 0)
+	# How many programms we would like to check? (-1 because array start with 0)
  
-local namelength="$((${#names[@]} -1))"
+	local namelength="$((${#names[@]} -1))"
 
-#echo "$namelength"
+	#echo "$namelength"
 
-if [[ "$1" == "namesubuntu" ]]; then
-	#wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable on launchpad!!!"
-	echo "Let's see what we have for ubuntu in $lang:"
-	echo -e "\b"
-elif [[ "$1" == "nameselementary" ]]; then
-	echo "Let's see what we have for elementary in $lang:"
-	echo -e "\b"
-elif [[ "$1" == "namesunityscopes" ]]; then
-	echo "Let's see what we have for the unity scopes in $lang:"
-	echo -e "\b"
-fi
-
-# just to not be influenced by an env var
-local shown
-local opened
-local textbreak
-local red # declare these here, to be able to check the exit status; when we use var=$(..) # https://github.com/koalaman/shellcheck/wiki/SC2155
-local green
-local dw
-local ns # ns = needs review
-local ut # ut = untranslated
-
-local red=$(tput setaf 1) #colors
-local green=$(tput setaf 2)
-
-for ((i = 0; i <= namelength; i++)); do
-	
-	parallel (){
-
-		dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | grep '<span class="sortkey">' | tail -n2 )"
-
-		ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
-
-		ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
-
-		# lets check if that worked
-		if [[ "$ut" != *[0-9] || "$ns" != *[0-9] ]]; then
-			echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2
-			exit 1
-		fi
-
-		#echo "vars(${names[$i]}): $ut + $ns" # debugging
-
-		if [[ "$ut" != "0" ]]; then
-			
-			textbreak="1"
-			echo "${names[$i]}:"
-			shown="1"
-			echo -e "$red""$ut untranslated"; tput sgr0
-
-			if [[ "$openut" == "1" ]]; then
-						
-				xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
-				opened="1"		
-			fi
-		else
-			shown="0"
-		fi
-
-		if [[ "$ns" != "0" ]]; then
-
-			textbreak="1"
-			if [[ "$openns" == "1" && "$opened" != "1" ]]; then
-				xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
-			fi
-
-			if [[ "$shown" == "1" ]]; then
-				echo -e "$green""$ns new suggestion(s)"; tput sgr0
-			else
-				echo "${names[$i]}:"
-				echo -e "$green""$ns new suggestion(s)"; tput sgr0
-			fi
-		fi
-
-		if [[ "$textbreak" == "1" ]]; then
+	case "$1" in 
+		ubuntu)
+			#wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable"
+			echo "Let's see what we have for ubuntu in $lang:"
 			echo -e "\b"
-		fi
-		
-		# clear vars for new loop round
-		unset opened
-		unset shown
-		unset textbreak
+			;;
+		elementary)
+			echo "Let's see what we have for elementary in $lang:"
+			echo -e "\b"
+			;;
+		unityscopes)
+			echo "Let's see what we have for the unity scopes in $lang:"
+			echo -e "\b"
+			;;
+	esac
+	
+	# just to not be influenced by an env var; ns = needs review; ut = untranslated
+	local shown opened textbreak red green dw ns ut red=$(tput setaf 1) green=$(tput setaf 2)
 
-	}
+	for ((i = 0; i <= namelength; i++)); do
 
-parallel &
+		parallel (){
+
+			dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | \
+			grep '<span class="sortkey">' | tail -n2 )"
+
+			ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
+
+			ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
+
+			# lets check if that worked
+			[[ "$ut" != *[0-9] || "$ns" != *[0-9] ]] \
+			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2 && exit 1
+
+			#echo "vars(${names[$i]}): $ut + $ns" # debugging
+
+			if [[ "$ut" != "0" ]]; then
+
+				textbreak="1"
+				echo "${names[$i]}:"
+				shown="1"
+				echo -e "$red""$ut untranslated"; tput sgr0
+
+				if [[ "$openut" == "1" ]]; then
+
+					xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
+					opened="1"
+				fi
+			else
+				shown="0"
+			fi
+
+			if [[ "$ns" != "0" ]]; then
+
+				textbreak="1"
+				if [[ "$openns" == "1" && "$opened" != "1" ]]; then
+					xdg-open "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null
+				fi
+
+				if [[ "$shown" == "1" ]]; then
+					echo -e "$green""$ns new suggestion(s)"; tput sgr0
+				else
+					echo "${names[$i]}:"
+					echo -e "$green""$ns new suggestion(s)"; tput sgr0
+				fi
+			fi
+
+			[[ "$textbreak" == "1" ]] && echo -e "\b"
+
+			# clear vars for new loop round
+			unset opened shown textbreak
+
+}
+
+parallel & # if the fuction is done it just throws out the result; this may give us a wrong formated output.
 done
 wait # we must wait until all parallel's are done; the problem here is that we can not get the exit status of all programms
 }
 
 # we can not use a function here
 
-while getopts ":uesol:h" opt; do
+# getopts: no --option
+# old style $1 and shift code:  we can add that, but its too long
+# we could also use http://mywiki.wooledge.org/BashFAQ/035
+
+while getopts ":cuesol:h" opt; do
 	case "$opt" in
+	c)
+		checkupdate
+		;;
 	u)
-		checkubuntu="1"
+		checktranslations ubuntu
 		;;
 	e)
-		checkelementary="1"
+		checktranslations elementary
 		;;
 	s)
-		checknamesunityscopes="1"
+		checktranslations unityscopes
 		;;
 	o)
 		openns="1"
@@ -181,18 +185,3 @@ while getopts ":uesol:h" opt; do
 		;;
 	esac
 done
-
-
-# getopts: no --option
-# old style $1 and shift code:  we can add that, but its too long
-# we could also use http://mywiki.wooledge.org/BashFAQ/035
-
-if [[ "$checkubuntu" == "1" && "$checkelementary" == "1" && "$checknamesunityscopes" == "1" ]];then
-	checktranslations namesubuntu; checktranslations nameselementary; checktranslations namesunityscopes
-elif [[ "$checkubuntu" == "1" ]]; then 
-	checktranslations namesubuntu
-elif [[ "$checkelementary" == "1" ]];then 
-	checktranslations nameselementary
-elif [[ "$checknamesunityscopes" == "1" ]]; then
-	checktranslations namesunityscopes
-fi

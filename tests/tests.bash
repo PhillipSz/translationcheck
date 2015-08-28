@@ -3,10 +3,10 @@
 # test for translationcheck.bash
 
 tests (){
-	~/translationcheck/translationcheck.bash -uesl "german" > /dev/null || echo "error" # it probably never hit this echo
-	~/translationcheck/translationcheck.bash -uesl "french" > /dev/null || echo "error"
-	~/translationcheck/translationcheck.bash -uesl "Chinese (Simplified)" > /dev/null || echo "error"
-	~/translationcheck/translationcheck.bash -uesl "English (United Kingdom)" > /dev/null ||  echo "error"
+	~/translationcheck/translationcheck.bash -cuesl "german" > /dev/null || echo "error" # it probably never hit this echo
+	~/translationcheck/translationcheck.bash -cuesl "french" > /dev/null || echo "error"
+	~/translationcheck/translationcheck.bash -cuesl "Chinese (Simplified)" > /dev/null || echo "error"
+	~/translationcheck/translationcheck.bash -cuesl "English (United Kingdom)" > /dev/null ||  echo "error"
 }
 
 time tests
