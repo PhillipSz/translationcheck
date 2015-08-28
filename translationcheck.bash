@@ -2,8 +2,9 @@
 #
 # Script to check for Launchpad Translation
 #
-# curently only elementary os apps and ubuntu-touch apps works!
+# curently only elementary os apps, ubuntu-touch apps and uniyt scopes works!
 #
+# debuging: PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'; set -x 
 
 clear
 shopt -s extglob # we need that later
@@ -15,10 +16,17 @@ openns="0" # set to 1 to open all strings that needs review in a browser, 0 to o
 
 checkubuntu="0" # set to 1 to check ubuntu apps, 0 to not do so
 checkelementary="0" # set to 1 to check elementary apps, 0 to not do so
+checknamesunityscopes="0"
+
+# To get these I used:
+
+#wget -q -O- https://translations.launchpad.net/unity-scopes 2> /dev/null | sed -e 's/(.)+Translatable projects//' -e 's/untranslatable-projects(.)+//' | grep -Eo '<a href="https://launchpad.net/(.)+\+translations"' | sed -e 's/<a href="https:\/\/launchpad.net\///' -e 's/\/+translations"//' -e 's/^/"/' -e 's/$/"/' | tr '\n' ' ' | sed -e 's/^/namesunityscopes=(/' -e 's/ $//' -e 's/$/)/'
+
+namesunityscopes=("unity-scope-devhelp" "unity-scope-ubuntushop" "unity-scope-wikipedia" "unity-scope-calculator" "unity-scope-grooveshark" "unity-scope-firefoxbookmarks" "unity-scope-zeitgeistwebhistory" "unity-scope-sciencedirect" "unity-scope-sshsearch" "unity-scope-evolution" "unity-scope-remmina" "unity-scope-gmusicbrowser" "unity-scope-deviantart" "unity-scope-github" "unity-scope-etsy" "unity-scope-askubuntu" "unity-scope-dribbble" "unity-scope-europeana" "unity-scope-soundcloud" "unity-scope-pubmed" "unity-scope-medicines" "unity-scope-tumblr" "unity-scope-googlescholar" "unity-scope-openweathermap" "unity-scope-clementine" "unity-scope-phpdoc" "unity-scope-chromiumbookmarks" "unity-scope-tomboy" "unity-scope-pypi" "unity-scope-calibre" "unity-scope-stackexchange" "unity-scope-launchpad" "unity-scope-yahoostock" "unity-scope-audacious" "unity-scope-nullege" "unity-scope-isgd" "unity-scope-foursquare" "unity-scope-colourlovers" "unity-scope-imdb" "unity-scope-songsterr" "unity-scope-virtualbox" "unity-scope-wikispecies" "unity-scope-click" "unity-scope-jstor" "unity-scope-yelpplaces" "unity-scope-googlebooks" "unity-scope-reddit" "unity-scope-recipepuppy" "unity-scope-mediascanner" "unity-scope-yelp" "unity-scope-songkick" "unity-scope-guayadeque" "unity-scope-scopes" "unity-scope-openclipart" "unity-scope-musique" "unity-scope-gourmet" "unity-scope-texdoc" "unity-scope-googlenews" "unity-scope-ebay" "unity-scope-gallica" "unity-scope-manpages" "unity-scope-zotero")
 
 nameselementary=("pantheon-calculator" "switchboard-plug-datetime" "noise" "switchboard-plug-keyboard" "elementaryos" "snap-elementary" "audience" "slingshot" "switchboard-plug-pantheon-shell" "switchboard-plug-locale" "switchboard-plug-display" "switchboard-plug-applications" "scratch" "gala" "switchboard-plug-about" "pantheon-files" "switchboard-plug-notifications" "switchboard-plug-security-privacy" "switchboard" "wingpanel" "switchboard-plug-power" "appcenter" "pantheon-greeter" "euclide" "switchboard-plug-onlineaccounts" "pantheon-terminal" "granite" "maya" "noise" "pantheon-photos" "midori" "wingpanel-indicator-notifications" "switchboard-plug-useraccounts" "wingpanel-indicator-power" "switchboard-plug-networking" "plank")
 
-namesubuntu=("help-app" "ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-click" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
+namesubuntu=("help-app" "ubuntu-docviewer-app" "ubuntu-clock-app" "ubuntu-calendar-app" "ubuntu-weather-app" "ubuntu-rssreader-app" "ubuntu-filemanager-app" "ubuntu-calculator-app" "ubuntu-terminal-app" "music-app" "address-book-app" "webbrowser-app" "gallery-app" "dialer-app" "sudoku-app" "reminders-app" "mediaplayer-app" "notes-app" "camera-app" "messaging-app" "ubuntu-system-settings-online-accounts" "software-center-agent" "location-service" "libqtelegram" "telephony-service" "ciborium" "ubuntu-keyboard" "ubuntu-rest-scopes" "unity-scope-scopes" "today-scope" "unity-scope-mediascanner" "indicator-network" "indicator-location" "indicator-bluetooth" "unity8" "ubuntu-ui-toolkit")
 
 # start script
 
@@ -31,6 +39,7 @@ echo "-e,	check elementary apps"
 echo "-o,	open all untranslated/needs review apps in a browser"
 echo "-h,	give this help list"
 echo "-l, 	let you specify a language, e.g German, Greek or "English \(United Kingdom\)""
+echo "-s,	check unity scopes"
 
 echo -e "\b"
 echo "Report bugs to https://github.com/PhillipSz/translationcheck/issues"
@@ -55,8 +64,10 @@ if [[ "$1" == "namesubuntu" ]]; then
 elif [[ "$1" == "nameselementary" ]]; then
 	echo "Let's see what we have for elementary in $lang:"
 	echo -e "\b"
+elif [[ "$1" == "namesunityscopes" ]]; then
+	echo "Let's see what we have for the unity scopes in $lang:"
+	echo -e "\b"
 fi
-
 
 # just to not be influenced by an env var
 local shown
@@ -138,13 +149,16 @@ wait # we must wait until all parallel's are done
 
 # we can not use a function here
 
-while getopts ":ueovl:h" opt; do
+while getopts ":uesol:h" opt; do
 	case "$opt" in
 	u)
 		checkubuntu="1"
 		;;
 	e)
 		checkelementary="1"
+		;;
+	s)
+		checknamesunityscopes="1"
 		;;
 	o)
 		openns="1"
@@ -173,10 +187,12 @@ done
 # old style $1 and shift code:  we can add that, but its too long
 # we could also use http://mywiki.wooledge.org/BashFAQ/035
 
-if [[ "$checkubuntu" == "1" && "$checkelementary" == "1" ]];then 
-	checktranslations namesubuntu; checktranslations nameselementary
+if [[ "$checkubuntu" == "1" && "$checkelementary" == "1" && "$checknamesunityscopes" == "1" ]];then
+	checktranslations namesubuntu; checktranslations nameselementary; checktranslations namesunityscopes
 elif [[ "$checkubuntu" == "1" ]]; then 
 	checktranslations namesubuntu
 elif [[ "$checkelementary" == "1" ]];then 
 	checktranslations nameselementary
+elif [[ "$checknamesunityscopes" == "1" ]]; then
+	checktranslations namesunityscopes
 fi

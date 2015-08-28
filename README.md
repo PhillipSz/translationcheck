@@ -27,4 +27,4 @@ Report bugs to https://github.com/PhillipSz/translationcheck/issues
 -------------------------------------------------------------------------------------------------------------------------
 
 sha256sum:
-9f4b4b0ef3ba215d9a5d19e0daaf309c1ca7f6a2036ae7e9084b33b0b8b3b206  translationcheck.bash
+e5b27e1f03add5b7581fa97d5bcd962f6793c08f5d6fe2716c3c949a4e670267  translationcheck.bash
