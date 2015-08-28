@@ -4,7 +4,7 @@
 #
 # curently only elementary os apps, ubuntu-touch apps and uniyt scopes works!
 #
-# debuging: PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'; set -x 
+# debuging: PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'; set -x
 
 clear
 shopt -s extglob # we need that later
@@ -49,7 +49,7 @@ checktranslations(){
 
 # I use declare to be able to use a varibale as array name
 
-declare -n names="$1" # or use typeset, but it's the same in bash; # we need namesubuntu or nameselementary as input here
+declare -n names="$1" # or use typeset, but it's the same in bash; # we need names... as input here
 
 # How many programms we would like to check? (-1 because array start with 0)
  
@@ -144,7 +144,7 @@ for ((i = 0; i <= namelength; i++)); do
 
 parallel &
 done
-wait # we must wait until all parallel's are done
+wait # we must wait until all parallel's are done; the problem here is that we can not get the exit status of all programms
 }
 
 # we can not use a function here

@@ -2,10 +2,15 @@
 #
 # test for translationcheck.bash
 
-bash ~/translationcheck/translationcheck.bash -uel "german" > /dev/null || { echo "error" >&2; exit 1; }
-bash ~/translationcheck/translationcheck.bash -uel "french" > /dev/null || { echo "error" >&2; exit 1; }
-bash ~/translationcheck/translationcheck.bash -uel "Chinese (Simplified)" > /dev/null || { echo "error" >&2; exit 1; }
-bash ~/translationcheck/translationcheck.bash -uel "English (United Kingdom)" > /dev/null || { echo "error" >&2; exit 1; }
-bash ~/translationcheck/translationcheck.bash -uel "Assamese" > /dev/null || { echo "error" >&2; exit 1; }
+tests (){
+	~/translationcheck/translationcheck.bash -uesl "german" > /dev/null || echo "error" # it probably never hit this echo
+	~/translationcheck/translationcheck.bash -uesl "french" > /dev/null || echo "error"
+	~/translationcheck/translationcheck.bash -uesl "Chinese (Simplified)" > /dev/null || echo "error"
+	~/translationcheck/translationcheck.bash -uesl "English (United Kingdom)" > /dev/null ||  echo "error"
+}
+
+time tests
+
 echo $BASH_VERSION
-echo "works!"
+
+echo "Read the output from the script, as still script will always exit with 0!"
