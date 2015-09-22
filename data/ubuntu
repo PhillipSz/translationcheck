@@ -1,3 +1,4 @@
+telegram-app
 help-app
 ubuntu-docviewer-app
 ubuntu-clock-app
@@ -21,7 +22,6 @@ messaging-app
 ubuntu-system-settings-online-accounts
 software-center-agent
 location-service
-libqtelegram
 telephony-service
 ciborium
 ubuntu-keyboard
