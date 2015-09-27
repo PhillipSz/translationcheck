@@ -97,7 +97,7 @@ checktranslations(){
 
 			# lets check if that worked
 			[[ "$ut" != *[0-9] || "$ns" != *[0-9] ]] \
-			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; ut = $ut; ns = $ns; \$1 = $1" >&2 && exit 1
+			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}" >&2 && exit 1
 
 			#echo "vars(${names[$i]}): $ut + $ns" # debugging
 
