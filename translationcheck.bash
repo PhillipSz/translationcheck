@@ -2,7 +2,7 @@
 #
 # Script to check for Launchpad Translation
 #
-# curently only elementary os apps, ubuntu-touch apps and uniyt scopes works!
+# curently only elementary os apps, ubuntu-touch apps and unity scopes works!
 #
 # debuging: PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'; set -x
 
@@ -46,7 +46,7 @@ echo "-e,	check elementary apps"
 echo "-o,	open all untranslated/needs review apps in a browser"
 echo "-c,	checks for new translatable apps from elementary/unity scopes and saves them"
 echo "-h,	give this help list"
-echo "-l, 	let you specify a language, e.g German, Greek or "English \(United Kingdom\)""
+echo "-l, 	let you specify a language, e.g. German, Greek or "English \(United Kingdom\)""
 echo "-s,	check unity scopes"
 
 echo -e "\b"
@@ -62,8 +62,6 @@ checktranslations(){
 	# How many programms we would like to check? (-1 because array start with 0)
  
 	local namelength="$((${#names[@]} -1))"
-
-	#echo "$namelength"
 
 	case "$1" in
 		ubuntu)
@@ -81,32 +79,27 @@ checktranslations(){
 			;;
 	esac
 	
-	# just to not be influenced by an env var; ns = needs review; ut = untranslated
-	local shown opened textbreak red green dw ns ut red=$(tput setaf 1) green=$(tput setaf 2)
+	# just to not be influenced by an env var
+	local shown opened textbreak red green results red=$(tput setaf 1) green=$(tput setaf 2)
 
 	for ((i = 0; i <= namelength; i++)); do
 
 		parallel (){
 
-			dw="$( wget -q -O- "https://translations.launchpad.net/${names[$i]}/" 2> /dev/null | grep -i -A 30 ">$lang<" | \
-			grep '<span class="sortkey">' | tail -n2 )"
-
-			ut="$( echo "$dw" | head -n1 | egrep -o "[0-9]+" )"
-
-			ns="$( echo "$dw" | tail -n1 | egrep -o "[0-9]+" )"
+			#Check if the start in sed is a good one or can give us errors?
+			mapfile -t results < <(wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -iA 30 ">$lang<" | \
+			sed -rn '/<img/,$ s/.*<span class="sortkey">(.*)<\/span>/\1/p')
 
 			# lets check if that worked
-			[[ "$ut" != *[0-9] || "$ns" != *[0-9] ]] \
-			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}" >&2 && exit 1
+			[[ "${results[0]}" != *[0-9] || "${results[1]}" != *[0-9] ]] \
+			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; results = ${results[@]}" >&2 && exit 1
 
-			#echo "vars(${names[$i]}): $ut + $ns" # debugging
-
-			if [[ "$ut" != "0" ]]; then
+			if [[ "${results[0]}" != "0" ]]; then
 
 				textbreak="1"
 				echo "${names[$i]}:"
 				shown="1"
-				echo -e "$red""$ut untranslated"; tput sgr0
+				echo -e "$red""${results[0]} untranslated"; tput sgr0
 
 				if [[ "$openut" == "1" ]]; then
 
@@ -117,7 +110,7 @@ checktranslations(){
 				shown="0"
 			fi
 
-			if [[ "$ns" != "0" ]]; then
+			if [[ "${results[1]}" != "0" ]]; then
 
 				textbreak="1"
 				if [[ "$openns" == "1" && "$opened" != "1" ]]; then
@@ -125,10 +118,10 @@ checktranslations(){
 				fi
 
 				if [[ "$shown" == "1" ]]; then
-					echo -e "$green""$ns new suggestion(s)"; tput sgr0
+					echo -e "$green""${results[1]} new suggestion(s)"; tput sgr0
 				else
 					echo "${names[$i]}:"
-					echo -e "$green""$ns new suggestion(s)"; tput sgr0
+					echo -e "$green""${results[1]} new suggestion(s)"; tput sgr0
 				fi
 			fi
 
