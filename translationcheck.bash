@@ -27,9 +27,9 @@ checkupdate () {
 		local projects_for_file=$(wget -q -O- https://translations.launchpad.net/"${projects_url[$i]}" 2> /dev/null | \
 		sed -rn '/Translatable projects/,/untranslatable-projects/ s/.*href="https:\/\/launchpad.net\/(.*)\/\+translations".*/\1/p')
 
-		if [[ "$projects_for_file" =~ ([a-z]|-|[0-9])+ ]]; then 
+		if [[ "$projects_for_file" =~ ([a-z]|-|[0-9])+ ]]; then
 			echo "$projects_for_file" > data/"${projects_update[$i]}"
-		else 
+		else
 			echo "Ohh something is wrong with "${projects_update[$i]}!" Please report bugs to https://github.com/PhillipSz/translationcheck/issues"
 		fi
 	done
@@ -65,7 +65,7 @@ checktranslations(){
 
 	#echo "$namelength"
 
-	case "$1" in 
+	case "$1" in
 		ubuntu)
 			#wget -q -O- https://translations.launchpad.net/ubuntu/X??/ >/dev/null && echo "New version x is now translatable"
 			echo "Let's see what we have for ubuntu in $lang:"
@@ -156,13 +156,13 @@ while getopts ":cuesol:h" opt; do
 		checkupdate
 		;;
 	u)
-		checktranslations ubuntu
+		checkubuntu="1"
 		;;
 	e)
-		checktranslations elementary
+		checkelementary="1"
 		;;
 	s)
-		checktranslations unityscopes
+		checkunityscopes="1"
 		;;
 	o)
 		openns="1"
@@ -185,3 +185,8 @@ while getopts ":cuesol:h" opt; do
 		;;
 	esac
 done
+
+# We can not directly call these functions in getopts because we need $lang to be set before we run anything else.
+[[ "$checkubuntu" == "1" ]] && checktranslations ubuntu
+[[ "$checkelementary" == "1" ]] && checktranslations elementary
+[[ "$checkunityscopes" == "1" ]] && checktranslations unityscopes
