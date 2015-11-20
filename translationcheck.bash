@@ -29,6 +29,7 @@ checkupdate () {
 
 		if [[ "$projects_for_file" =~ ([a-z]|-|[0-9])+ ]]; then
 			echo "$projects_for_file" > data/"${projects_update[$i]}"
+			sort -o "data/"${projects_update[$i]}"" "data/"${projects_update[$i]}""
 		else
 			echo "Ohh something is wrong with "${projects_update[$i]}!" Please report bugs to https://github.com/PhillipSz/translationcheck/issues"
 		fi
