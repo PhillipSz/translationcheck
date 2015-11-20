@@ -80,7 +80,7 @@ checktranslations(){
 	esac
 	
 	# just to not be influenced by an env var
-	local shown opened textbreak red green results red=$(tput setaf 1) green=$(tput setaf 2)
+	local shown opened textbreak results red=$(tput setaf 1) green=$(tput setaf 2) yellow=$(tput setaf 3)
 
 	for ((i = 0; i <= namelength; i++)); do
 
@@ -91,8 +91,11 @@ checktranslations(){
 			sed -rn '/<img/,$ s/.*<span class="sortkey">(.*)<\/span>/\1/p')
 
 			# lets check if that worked
+			# we assume that it has no translations. We may find a better way?
 			[[ "${results[0]}" != *[0-9] || "${results[1]}" != *[0-9] ]] \
-			&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; results = ${results[@]}" >&2 && exit 1
+			&& { echo "${names[$i]}:"; echo "$yellow""This app probably has no translations in $lang yet!"; tput sgr0; \
+			echo -e "\b";} >&2 && exit 1
+			#&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; results = ${results[@]}" >&2 && exit 1
 
 			if [[ "${results[0]}" != "0" ]]; then
 
