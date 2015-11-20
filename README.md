@@ -22,6 +22,8 @@ Examples:
 
 (Note: Currently German is the default language! You can change this in line 12 in translationcheck.bash)
 
+This script requires (normally all should be installed): bash, wget, sed, sort, grep, tput, xdg-open
+
 Report bugs to https://github.com/PhillipSz/translationcheck/issues
 
 -------------------------------------------------------------------------------------------------------------------------
