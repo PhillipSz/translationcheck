@@ -1,3 +1,3 @@
 dist: trusty
 language: bash
-script: ./tests/tests-for-ci.bash
+script: ./tests/tests.bash
