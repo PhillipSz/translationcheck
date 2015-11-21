@@ -83,7 +83,7 @@ checktranslations(){
 	esac
 	
 	# just to not be influenced by an env var
-	local shown opened textbreak results red=$(tput setaf 1) green=$(tput setaf 2) yellow=$(tput setaf 3)
+	local shown opened textbreak results error red=$(tput setaf 1) green=$(tput setaf 2) yellow=$(tput setaf 3)
 
 	for ((i = 0; i <= namelength; i++)); do
 
@@ -93,12 +93,19 @@ checktranslations(){
 			mapfile -t results < <(wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -iA 30 ">$lang<" | \
 			sed -rn '/<img/,$ s/.*<span class="sortkey">(.*)<\/span>/\1/p')
 
-			# lets check if that worked
-			# we assume that it has no translations. We may find a better way?
-			[[ "${results[0]}" != *[0-9] || "${results[1]}" != *[0-9] ]] \
-			&& { echo "${names[$i]}:"; echo "$yellow""This app probably has no translations in $lang yet!"; tput sgr0; \
-			echo -e "\b";} >&2 && exit 1
-			#&& echo "input error! Debug: lang = $lang; name = ${names[$i]}; results = ${results[@]}" >&2 && exit 1
+			# let's check if that worked
+			if [[ "${results[0]}" != *[0-9] || "${results[1]}" != *[0-9] ]];then
+				error="0"
+				wget -q -O- "https://translations.launchpad.net/${names[$i]}/" | grep -iA 30 ">$lang<" >/dev/null || error="1"
+			fi
+
+			# we are doing this here to check if we are parsing correctly with sed.
+			if [[ "$error" == "1" ]]; then
+				echo "${names[$i]}:"; echo "$yellow""This app probably has no translations in $lang yet!"; tput sgr0; \
+				echo -e "\b"; >&2 && exit 1
+			elif [[ "$error" == "0" ]]; then
+				echo "input error! Debug: lang = $lang; name = ${names[$i]}; results = ${results[@]}" >&2 && exit 1
+			fi
 
 			if [[ "${results[0]}" != "0" ]]; then
 
