@@ -2,11 +2,11 @@ translationcheck for Launchpad
 ==============================
 [![Build Status](https://travis-ci.org/PhillipSz/translationcheck.png)](https://travis-ci.org/PhillipSz/translationcheck)
 
-Just run 
-	
+Just run
+
 	git clone https://github.com/PhillipSz/translationcheck && cd translationcheck
 
-and then 
+and then
 
 	bash translationcheck.bash -h
 
@@ -22,11 +22,11 @@ Examples:
 
 (Note: Currently German is the default language! You can change this in line 12 in translationcheck.bash)
 
+To updates this script just run:
+
+	git pull -r
+
 This script requires (normally all should be installed): bash, wget, sed, sort, grep, tput, xdg-open
-
-Report bugs to https://github.com/PhillipSz/translationcheck/issues
-
 -------------------------------------------------------------------------------------------------------------------------
 
-sha256sum:
-feb5f75b203071147814789c6427f12f55f526b895e1f163600b3a5fc2922377  translationcheck.bash
+Report bugs to https://github.com/PhillipSz/translationcheck/issues
