@@ -33,6 +33,7 @@ def parseargs():
         results["elementary"] = {}
     if args.unityscopes:
         results["unityscopes"] = {}
+
     if args.language:
         language = args.language
     else:
@@ -81,6 +82,7 @@ def printit(results, language):
                 if openb == "1":
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
+                # TODO: we must check if this is really the case
                 print(yellow, "This app probably has no translations in", language, "yet!", end)
             elif rs[0] == "0" and rs[1] == "0":
                 continue
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     print("Let's see what needs work…")
     results = getapps(results)
     for project, apps in results.items():
-        with concurrent.futures.ThreadPoolExecutor((os.cpu_count() or 1) * 5) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
             future_to_app = {executor.submit(getresults, app, language): app for app, rs in apps.items()}
             for future in concurrent.futures.as_completed(future_to_app):
                 app = future_to_app[future]
