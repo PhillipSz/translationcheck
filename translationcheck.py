@@ -13,6 +13,7 @@ import re
 import concurrent.futures
 import webbrowser
 import os
+import logging
 
 def parseargs():
     '''Parse the arguments'''
@@ -23,6 +24,7 @@ def parseargs():
     parser.add_argument("-s", "--unityscopes", help="check unity scopes", action="store_true")
     parser.add_argument("-o", "--open", help="open all untranslated/needs review apps in a browser",
                         action="store_true")
+    parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
     parser.add_argument("-l", "--language", type=str, default='German',
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)"')
     args = parser.parse_args()
@@ -34,6 +36,9 @@ def parseargs():
         results["elementary"] = {}
     if args.unityscopes:
         results["unityscopes"] = {}
+
+    if args.verbose:
+        logging.basicConfig(format="%(levelname)s: %(threadName)s: %(message)s", level=logging.INFO)
 
     if not args.ubuntu and not args.elementary and not args.unityscopes:
         parser.print_help()
@@ -56,10 +61,11 @@ def getresults(app, language):
     # I know I should not parse html with regex, but I still do it because it's easy and the input will always be the same
     regex = '>' + language + '<.*?<img height=.*?<span class="sortkey">([0-9]+)</span>.*?<span class="sortkey">([0-9]+)</span>'
     res = re.search(regex, page, flags=re.DOTALL)
-    #print (app, "downloaded!")
+    logging.info("%s downloaded!\n", app)
     try:
         return res.group(1), res.group(2)
     except AttributeError:
+        logging.info("We have a problem with parsing %s\n", app)
         return 'error', 'error'
 
 def printit(results, language):
@@ -75,7 +81,7 @@ def printit(results, language):
 
         for app, rs in apps.items():
             if rs[0] == "error":
-                if openb == True:
+                if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 # TODO: we must check if this is really the case
@@ -83,7 +89,7 @@ def printit(results, language):
             elif rs[0] == "0" and rs[1] == "0":
                 continue
             else:
-                if openb == True:
+                if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 if rs[0] != "0":
