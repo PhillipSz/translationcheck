@@ -16,7 +16,8 @@ import os
 
 def parseargs():
     '''Parse the arguments'''
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Script to check for Launchpad Translation',
+                                     epilog='Report bugs to https://github.com/PhillipSz/translationcheck/issues')
     parser.add_argument("-u", "--ubuntu", help="check ubuntu apps", action="store_true")
     parser.add_argument("-e", "--elementary", help="check elementary apps", action="store_true")
     parser.add_argument("-s", "--unityscopes", help="check unity scopes", action="store_true")
