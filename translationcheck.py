@@ -23,7 +23,7 @@ def parseargs():
     parser.add_argument("-s", "--unityscopes", help="check unity scopes", action="store_true")
     parser.add_argument("-o", "--open", help="open all untranslated/needs review apps in a browser",
                         action="store_true")
-    parser.add_argument("-l", "--language", type=str,
+    parser.add_argument("-l", "--language", type=str, default='German',
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)"')
     args = parser.parse_args()
 
@@ -35,16 +35,11 @@ def parseargs():
     if args.unityscopes:
         results["unityscopes"] = {}
 
-    if args.language:
-        language = args.language
-    else:
-        language = "German"
-    if args.open:
-        openb = "1"
-    else:
-        openb = "0"
+    if not args.ubuntu and not args.elementary and not args.unityscopes:
+        parser.print_help()
+        raise SystemExit(1)
 
-    return language, openb, results
+    return args.language, args.open, results
 
 def getapps(results):
     '''read the projects in'''
@@ -80,7 +75,7 @@ def printit(results, language):
 
         for app, rs in apps.items():
             if rs[0] == "error":
-                if openb == "1":
+                if openb == True:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 # TODO: we must check if this is really the case
@@ -88,7 +83,7 @@ def printit(results, language):
             elif rs[0] == "0" and rs[1] == "0":
                 continue
             else:
-                if openb == "1":
+                if openb == True:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 if rs[0] != "0":
