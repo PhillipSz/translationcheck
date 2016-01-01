@@ -2,8 +2,7 @@
 #
 # TODO:
 #   - make it possible to update the app list files
-#   - maybe add debugging options?
-#   - add (unit?)tests
+#   - make Chinese (Simplified) work
 #
 
 ''' Script to check for Launchpad Translation'''
@@ -49,8 +48,8 @@ def parseargs():
 def getapps(results):
     '''read the projects in'''
     for project in results:
-        with open("data/" + project) as f:
-            for line in f:
+        with open("data/" + project) as project_file:
+            for line in project_file:
                 results[project][line.rstrip('\n')] = []
     return results
 
@@ -68,7 +67,7 @@ def getresults(app, language):
         logging.info("We have a problem with parsing %s\n", app)
         return 'error', 'error'
 
-def printit(results, language):
+def printit(results, language, openb):
     '''Print it in a fancy way'''
     # colors
     yellow = '\033[93m'
@@ -79,25 +78,26 @@ def printit(results, language):
     for project, apps in results.items():
         print("\nFor", project, "in", language, "we have the following results:")
 
-        for app, rs in apps.items():
-            if rs[0] == "error":
+        for app, result in apps.items():
+            if result[0] == "error":
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 # TODO: we must check if this is really the case
                 print(yellow, "This app probably has no translations in", language, "yet!", end)
-            elif rs[0] == "0" and rs[1] == "0":
+            elif result[0] == "0" and result[1] == "0":
                 continue
             else:
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
-                if rs[0] != "0":
-                    print(red, rs[0], "untranslated", end)
-                if rs[1] != "0":
-                    print(green, rs[1], "new suggestion(s)", end)
+                if result[0] != "0":
+                    print(red, result[0], "untranslated", end)
+                if result[1] != "0":
+                    print(green, result[1], "new suggestion(s)", end)
 
-if __name__ == "__main__":
+def main():
+    '''This main functions calls all other function and also is responsible for running all the downloads at the same time'''
     language, openb, results = parseargs()
     print("Let's see what needs work…")
     results = getapps(results)
@@ -108,4 +108,7 @@ if __name__ == "__main__":
                 app = future_to_app[future]
                 rest = future.result()
                 results[project][app] = rest
-    printit(results, language)
+    printit(results, language, openb)
+
+if __name__ == "__main__":
+    main()
