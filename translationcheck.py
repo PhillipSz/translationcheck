@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 #
-# TODO:
-#   - make it possible to update the app list files
 #
 
 ''' Script to check for Launchpad Translation'''
@@ -22,12 +20,15 @@ def parseargs():
     parser.add_argument("-s", "--unityscopes", help="check unity scopes", action="store_true")
     parser.add_argument("-o", "--open", help="open all untranslated/needs review apps in a browser",
                         action="store_true")
-    parser.add_argument("-up", "--update", help="checks for new translatable apps \
+    parser.add_argument("--update", help="checks for new translatable apps \
                          from elementary/unity-scopes and saves them", action="store_true")
     parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
     parser.add_argument("-l", "--language", type=str, default='German',
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)"')
     args = parser.parse_args()
+
+    if args.verbose:
+        logging.basicConfig(format="%(levelname)s: %(threadName)s: %(message)s", level=logging.INFO)
 
     if args.update:
         updateapplists()
@@ -40,9 +41,6 @@ def parseargs():
         results["elementary"] = {}
     if args.unityscopes:
         results["unity-scopes"] = {}
-
-    if args.verbose:
-        logging.basicConfig(format="%(levelname)s: %(threadName)s: %(message)s", level=logging.INFO)
 
     if not args.ubuntu and not args.elementary and not args.unityscopes:
         parser.print_help()
@@ -63,7 +61,7 @@ def updateapplists():
         list.sort(res)
         with open('data/' + project, mode='wt', encoding='utf-8') as projectfile:
             projectfile.write('\n'.join(res))
-        #print (project, res)
+        logging.info("Updated %s.\n", project)
 
 def getapps(results):
     '''Read the projects in'''
