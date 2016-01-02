@@ -22,10 +22,16 @@ def parseargs():
     parser.add_argument("-s", "--unityscopes", help="check unity scopes", action="store_true")
     parser.add_argument("-o", "--open", help="open all untranslated/needs review apps in a browser",
                         action="store_true")
+    parser.add_argument("-up", "--update", help="checks for new translatable apps \
+                         from elementary/unity-scopes and saves them", action="store_true")
     parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
     parser.add_argument("-l", "--language", type=str, default='German',
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)"')
     args = parser.parse_args()
+
+    if args.update:
+        updateapplists()
+        raise SystemExit(0)
 
     results = {}
     if args.ubuntu:
@@ -33,7 +39,7 @@ def parseargs():
     if args.elementary:
         results["elementary"] = {}
     if args.unityscopes:
-        results["unityscopes"] = {}
+        results["unity-scopes"] = {}
 
     if args.verbose:
         logging.basicConfig(format="%(levelname)s: %(threadName)s: %(message)s", level=logging.INFO)
@@ -44,8 +50,23 @@ def parseargs():
 
     return args.language, args.open, results
 
+def updateapplists():
+    '''Updates the list of apps in data/'''
+    projects=("elementary", "unity-scopes")
+    for project in projects:
+        page = urlopen("https://translations.launchpad.net/" + project).read().decode('utf-8')
+        page_for_re = page.split('id="untranslatable-projects">')[0]
+        regex = '.*https://launchpad\.net/(.*)/\+translations.*'
+        res = re.findall(regex, page_for_re)
+        if project == "elementary":
+            res.append("plank")
+        list.sort(res)
+        with open('data/' + project, mode='wt', encoding='utf-8') as projectfile:
+            projectfile.write('\n'.join(res))
+        #print (project, res)
+
 def getapps(results):
-    '''read the projects in'''
+    '''Read the projects in'''
     for project in results:
         with open("data/" + project) as project_file:
             for line in project_file:
