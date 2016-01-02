@@ -10,8 +10,10 @@ noise
 pantheon-calculator
 pantheon-files
 pantheon-greeter
+pantheon-mail
 pantheon-photos
 pantheon-terminal
+plank
 scratch
 screenshot-tool
 slingshot
@@ -33,6 +35,7 @@ switchboard-plug-parental-controls
 switchboard-plug-power
 switchboard-plug-printers
 switchboard-plug-security-privacy
+switchboard-plug-sharing
 switchboard-plug-useraccounts
 wingpanel
 wingpanel-indicator-bluetooth
