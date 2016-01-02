@@ -8,25 +8,26 @@ Just run
 
 and then
 
-	bash translationcheck.bash -h
+	python3 translationcheck.py -h
 
 to see all options.
 
 Examples:
 
-	bash translationcheck.bash -uel French
+	python3 translationcheck.py -uel French
 
-	bash translationcheck.bash -el "English (United Kingdom)"
+	python3 translationcheck.py -el "English (United Kingdom)"
 
-	bash translationcheck.bash -u
-
-(Note: Currently German is the default language! You can change this in line 12 in translationcheck.bash)
+	python3 translationcheck.py -u
 
 To updates this script just run:
 
 	git pull -r
 
-This script requires (normally all should be installed): bash, wget, sed, sort, grep, tput, xdg-open
+(Note: Currently German is the default language! You can change this in line 26 in translationcheck.py)
+
+There is also a bash script which does the same thing, and has the same short options.
+
 -------------------------------------------------------------------------------------------------------------------------
 
 Report bugs to https://github.com/PhillipSz/translationcheck/issues
