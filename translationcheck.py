@@ -2,7 +2,6 @@
 #
 # TODO:
 #   - make it possible to update the app list files
-#   - make Chinese (Simplified) work
 #
 
 ''' Script to check for Launchpad Translation'''
@@ -55,17 +54,21 @@ def getapps(results):
 
 def getresults(app, language):
     '''Download and parse the launchpad pages, to get the numbers'''
-
-    page = urlopen("https://launchpad.net/" + app + "/+translations").read().decode('utf-8')
+    try:
+        page = urlopen("https://launchpad.net/" + app + "/+translations").read().decode('utf-8')
+    except:
+        logging.info("There is something wrong with %s. It is an URLError!\n", app)
+        return 'error', 'error'
     # I know I should not parse html with regex, but I still do it because it's easy and the input will always be the same
-    regex = '>' + language + '<.*?<img height=.*?<span class="sortkey">([0-9]+)</span>.*?<span class="sortkey">([0-9]+)</span>'
+    regex = '>' + re.escape(language) + '<.*?<img height=.*?<span class="sortkey">([0-9]+)</span>.*?<span class="sortkey">([0-9]+)</span>'
     res = re.search(regex, page, flags=re.DOTALL)
     logging.info("%s downloaded!\n", app)
     try:
         return res.group(1), res.group(2)
     except AttributeError:
         logging.info("We have a problem with parsing %s\n", app)
-        return 'error', 'error'
+        # TODO: we must check if this is really the case
+        return 'lnf', 'lnf' # language not found
 
 def printit(results, language, openb):
     '''Print it in a fancy way'''
@@ -80,10 +83,13 @@ def printit(results, language, openb):
 
         for app, result in apps.items():
             if result[0] == "error":
+                print('\n' + app + ":")
+                print(yellow, "There is something wrong with", app + ".\n",
+                      "Most likely the projecte moved to a different name.", end)
+            elif result[0] == "lnf":
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
-                # TODO: we must check if this is really the case
                 print(yellow, "This app probably has no translations in", language, "yet!", end)
             elif result[0] == "0" and result[1] == "0":
                 continue
