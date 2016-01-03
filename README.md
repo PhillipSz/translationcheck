@@ -14,11 +14,13 @@ to see all options.
 
 Examples:
 
-	python3 translationcheck.py -uel French
+	python3 translationcheck.py -uesl French
 
 	python3 translationcheck.py -el "English (United Kingdom)"
 
 	python3 translationcheck.py -u
+
+	python3 translationcheck.py --update
 
 To updates this script just run:
 
@@ -26,7 +28,7 @@ To updates this script just run:
 
 (Note: Currently German is the default language! You can change this in line 26 in translationcheck.py)
 
-There is also a bash script which does the same thing, and has the same short options.
+There is also a bash script which does the same thing, and has mostly the same short options.
 
 -------------------------------------------------------------------------------------------------------------------------
 

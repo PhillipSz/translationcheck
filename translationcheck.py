@@ -51,6 +51,7 @@ def parseargs():
 def updateapplists():
     '''Updates the list of apps in data/'''
     projects=("elementary", "unity-scopes")
+    print("Updating... ", end="", flush=True)
     for project in projects:
         page = urlopen("https://translations.launchpad.net/" + project).read().decode('utf-8')
         page_for_re = page.split('id="untranslatable-projects">')[0]
@@ -62,6 +63,7 @@ def updateapplists():
         with open('data/' + project, mode='wt', encoding='utf-8') as projectfile:
             projectfile.write('\n'.join(res))
         logging.info("Updated %s.\n", project)
+    print("Done!")
 
 def getapps(results):
     '''Read the projects in'''
@@ -104,7 +106,7 @@ def printit(results, language, openb):
             if result[0] == "error":
                 print('\n' + app + ":")
                 print(yellow, "There is something wrong with", app + ".\n",
-                      "Most likely the projecte moved to a different name.", end)
+                      "Most likely the project moved to a different location.", end)
             elif result[0] == "lnf":
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
@@ -122,7 +124,7 @@ def printit(results, language, openb):
                     print(green, result[1], "new suggestion(s)", end)
 
 def main():
-    '''This main functions calls all other function and also is responsible for running all the downloads at the same time'''
+    '''This main function calls all other functions and also is responsible for running all the downloads at the same time'''
     language, openb, results = parseargs()
     print("Let's see what needs work…")
     results = getapps(results)
