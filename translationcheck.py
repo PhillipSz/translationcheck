@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 #
-#
 
 ''' Script to check for Launchpad Translation'''
 import argparse
 from urllib.request import urlopen
+import urllib.error
 import re
 import concurrent.futures
 import webbrowser
-import os
+from os import cpu_count
 import logging
 
 def parseargs():
@@ -30,10 +30,6 @@ def parseargs():
     if args.verbose:
         logging.basicConfig(format="%(levelname)s: %(threadName)s: %(message)s", level=logging.INFO)
 
-    if args.update:
-        updateapplists()
-        raise SystemExit(0)
-
     results = {}
     if args.ubuntu:
         results["ubuntu"] = {}
@@ -42,28 +38,28 @@ def parseargs():
     if args.unityscopes:
         results["unity-scopes"] = {}
 
-    if not args.ubuntu and not args.elementary and not args.unityscopes:
+    if not args.ubuntu and not args.elementary and not args.unityscopes and not args.update:
         parser.print_help()
         raise SystemExit(1)
 
-    return args.language, args.open, results
+    return args.update, args.language, args.open, results
 
 def updateapplists():
     '''Updates the list of apps in data/'''
-    projects=("elementary", "unity-scopes")
-    print("Updating... ", end="", flush=True)
-    for project in projects:
+    print("Updating... ")
+    dict_of_apps = {"elementary": [], "unity-scopes": []}
+
+    for project, _ in dict_of_apps.items():
         page = urlopen("https://translations.launchpad.net/" + project).read().decode('utf-8')
         page_for_re = page.split('id="untranslatable-projects">')[0]
-        regex = '.*https://launchpad\.net/(.*)/\+translations.*'
+        regex = r'.*https://launchpad\.net/(.*)/\+translations.*'
         res = re.findall(regex, page_for_re)
         if project == "elementary":
             res.append("plank")
         list.sort(res)
-        with open('data/' + project, mode='wt', encoding='utf-8') as projectfile:
-            projectfile.write('\n'.join(res))
-        logging.info("Updated %s.\n", project)
-    print("Done!")
+        dict_of_apps[project] = res
+
+    return dict_of_apps
 
 def getapps(results):
     '''Read the projects in'''
@@ -77,8 +73,8 @@ def getresults(app, language):
     '''Download and parse the launchpad pages, to get the numbers'''
     try:
         page = urlopen("https://launchpad.net/" + app + "/+translations").read().decode('utf-8')
-    except:
-        logging.info("There is something wrong with %s. It is an URLError!\n", app)
+    except (urllib.error.HTTPError, urllib.error.URLError) as error:
+        logging.info("There is something wrong with %s. %s!\n", app, error)
         return 'error', 'error'
     # I know I should not parse html with regex, but I still do it because it's easy and the input will always be the same
     regex = '>' + re.escape(language) + '<.*?<img height=.*?<span class="sortkey">([0-9]+)</span>.*?<span class="sortkey">([0-9]+)</span>'
@@ -88,7 +84,6 @@ def getresults(app, language):
         return res.group(1), res.group(2)
     except AttributeError:
         logging.info("We have a problem with parsing %s\n", app)
-        # TODO: we must check if this is really the case
         return 'lnf', 'lnf' # language not found
 
 def printit(results, language, openb):
@@ -125,17 +120,29 @@ def printit(results, language, openb):
 
 def main():
     '''This main function calls all other functions and also is responsible for running all the downloads at the same time'''
-    language, openb, results = parseargs()
-    print("Let's see what needs work…")
-    results = getapps(results)
-    for project, apps in results.items():
-        with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
-            future_to_app = {executor.submit(getresults, app, language): app for app, rs in apps.items()}
-            for future in concurrent.futures.as_completed(future_to_app):
-                app = future_to_app[future]
-                rest = future.result()
-                results[project][app] = rest
-    printit(results, language, openb)
+    update, language, openb, results = parseargs()
+
+    if update:
+        dict_of_apps = updateapplists()
+
+        for project, apps in dict_of_apps.items():
+            with open('data/' + project, mode='wt', encoding='utf-8') as projectfile:
+                projectfile.write('\n'.join(apps))
+            logging.info("Updated %s.\n", project)
+        print("Done!")
+
+    if results:
+        print("Let's see what needs work…")
+
+        results = getapps(results)
+        for project, apps in results.items():
+            with concurrent.futures.ThreadPoolExecutor(max_workers=(cpu_count() or 1) * 5) as executor:
+                future_to_app = {executor.submit(getresults, app, language): app for app, _ in apps.items()}
+                for future in concurrent.futures.as_completed(future_to_app):
+                    app = future_to_app[future]
+                    rest = future.result()
+                    results[project][app] = rest
+        printit(results, language, openb)
 
 if __name__ == "__main__":
     main()
