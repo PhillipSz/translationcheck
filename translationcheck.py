@@ -8,7 +8,7 @@ import urllib.error
 import re
 import concurrent.futures
 import webbrowser
-from os import cpu_count
+import os
 import logging
 
 try:
@@ -142,7 +142,7 @@ def main():
 
         results = getapps(results)
         for project, apps in results.items():
-            with concurrent.futures.ThreadPoolExecutor(max_workers=(cpu_count() or 1) * 5) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
                 future_to_app = {executor.submit(getresults, app, language): app for app, _ in apps.items()}
                 with tqdm(total=len(apps)) as pbar:
                     for future in concurrent.futures.as_completed(future_to_app):
