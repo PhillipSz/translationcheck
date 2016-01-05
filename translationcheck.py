@@ -11,6 +11,12 @@ import webbrowser
 from os import cpu_count
 import logging
 
+try:
+    from tqdm import tqdm
+except ImportError:
+    print('Please install tqdm first with "sudo pip install tqdm"!')
+    raise SystemExit(1)
+
 def parseargs():
     '''Parse the arguments'''
     parser = argparse.ArgumentParser(description='Script to check for Launchpad Translation',
@@ -138,10 +144,12 @@ def main():
         for project, apps in results.items():
             with concurrent.futures.ThreadPoolExecutor(max_workers=(cpu_count() or 1) * 5) as executor:
                 future_to_app = {executor.submit(getresults, app, language): app for app, _ in apps.items()}
-                for future in concurrent.futures.as_completed(future_to_app):
-                    app = future_to_app[future]
-                    rest = future.result()
-                    results[project][app] = rest
+                with tqdm(total=len(apps)) as pbar:
+                    for future in concurrent.futures.as_completed(future_to_app):
+                        app = future_to_app[future]
+                        rest = future.result()
+                        results[project][app] = rest
+                        pbar.update(1)
         printit(results, language, openb)
 
 if __name__ == "__main__":
