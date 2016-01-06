@@ -14,7 +14,7 @@ import translationcheck
 
 # TODO: Add a test for parseargs(), printit() if possible
 
-class updateapplists(unittest.TestCase):
+class Updateapplists(unittest.TestCase):
     '''Tests for updateapplists'''
     def test_updateapplists(self):
         '''Test if we get an empty dict back (don't know if that test is useful) '''
@@ -47,7 +47,7 @@ class updateapplists(unittest.TestCase):
                 self.assertFalse('unity-scope-snappy' in apps)
                 self.assertFalse('unity-scope-piratebay' in apps)
 
-class getappsTestCase(unittest.TestCase):
+class GetappsTestCase(unittest.TestCase):
     '''Tests for getapps.'''
 
     def test_get_apps(self):
@@ -69,7 +69,7 @@ class getappsTestCase(unittest.TestCase):
                 self.assertTrue('unity-scope-zeitgeistwebhistory' in apps)
                 self.assertTrue('unity-scope-zotero' in apps)
 
-class getresultsTestCase(unittest.TestCase):
+class GetresultsTestCase(unittest.TestCase):
     '''Tests for getresults().
        I just choose these at random and with the hope that they don't change that much.'''
 
