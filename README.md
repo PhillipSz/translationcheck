@@ -4,7 +4,7 @@ translationcheck for Launchpad
 
 Just run
 
-	sudo pip install tqdm
+	sudo pip install requests
 
 	git clone https://github.com/PhillipSz/translationcheck && cd translationcheck
 

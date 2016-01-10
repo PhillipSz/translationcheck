@@ -3,8 +3,6 @@
 
 ''' Script to check for Launchpad Translation'''
 import argparse
-from urllib.request import urlopen
-import urllib.error
 import re
 import concurrent.futures
 import webbrowser
@@ -12,9 +10,9 @@ import os
 import logging
 
 try:
-    from tqdm import tqdm
+    import requests
 except ImportError:
-    print('Please install tqdm first with "sudo pip install tqdm"!')
+    print('Please install requests first with "sudo pip install requests"!')
     raise SystemExit(1)
 
 def parseargs():
@@ -56,7 +54,7 @@ def updateapplists():
     dict_of_apps = {"elementary": [], "unity-scopes": []}
 
     for project, _ in dict_of_apps.items():
-        page = urlopen("https://translations.launchpad.net/" + project).read().decode('utf-8')
+        page = requests.get("https://translations.launchpad.net/" + project).text
         page_for_re = page.split('id="untranslatable-projects">')[0]
         regex = r'.*https://launchpad\.net/(.*)/\+translations.*'
         res = re.findall(regex, page_for_re)
@@ -77,11 +75,12 @@ def getapps(results):
 
 def getresults(app, language):
     '''Download and parse the launchpad pages, to get the numbers'''
-    try:
-        page = urlopen("https://launchpad.net/" + app + "/+translations").read().decode('utf-8')
-    except (urllib.error.HTTPError, urllib.error.URLError) as error:
-        logging.info("There is something wrong with %s. %s!\n", app, error)
+    page = requests.get("https://launchpad.net/" + app + "/+translations")
+    if page.status_code != 200:
+        logging.info("There is something wrong with %s. Status Code=%s!\n", app, page.status_code)
         return 'error', 'error'
+    else:
+        page = page.text
     # I know I should not parse html with regex, but I still do it because it's easy and the input will always be the same
     regex = '>' + re.escape(language) + '<.*?<img height=.*?<span class="sortkey">([0-9]+)</span>.*?<span class="sortkey">([0-9]+)</span>'
     res = re.search(regex, page, flags=re.DOTALL)
@@ -144,12 +143,10 @@ def main():
         for project, apps in results.items():
             with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
                 future_to_app = {executor.submit(getresults, app, language): app for app, _ in apps.items()}
-                with tqdm(total=len(apps)) as pbar:
-                    for future in concurrent.futures.as_completed(future_to_app):
-                        app = future_to_app[future]
-                        rest = future.result()
-                        results[project][app] = rest
-                        pbar.update(1)
+                for future in concurrent.futures.as_completed(future_to_app):
+                    app = future_to_app[future]
+                    rest = future.result()
+                    results[project][app] = rest
         printit(results, language, openb)
 
 if __name__ == "__main__":
