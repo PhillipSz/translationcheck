@@ -4,13 +4,8 @@
 #
 '''Tests for translationcheck'''
 import unittest
-# ugly hack to import translationcheck
-# from http://stackoverflow.com/questions/4542352/import-from-sibling-directory
-import os
-import inspect
-os.sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))
 
-import translationcheck
+from lib import translationcheck
 
 # TODO: Add a test for parseargs(), printit() if possible
 
