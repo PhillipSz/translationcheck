@@ -9,4 +9,4 @@ python:
   - "nightly" # currently points to 3.6-dev
 # command to run tests
 install: pip install requests
-script: ./tests/tests.py
+script: python3 -m unittest discover -v
