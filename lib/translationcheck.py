@@ -13,15 +13,16 @@ except ImportError:
 def readconfig():
     config = configparser.ConfigParser()
     config.read('.conf.ini')
-    language = config['DEFAULT']['language']
-    if not language:
+
+    try:
+        language = config['DEFAULT']['language']
+    except KeyError:
         language = input("Please enter your language (can be changed later in '.conf.ini'): ")
         config['DEFAULT']['language'] = language
         with open('.conf.ini', 'w') as configfile:
             config.write(configfile)
-        return language
-    else:
-        return language
+
+    return language
 
 def updateapplists():
     '''Updates the list of apps in data/'''
