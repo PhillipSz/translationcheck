@@ -4,13 +4,8 @@
 #
 '''Tests for translationcheck'''
 import unittest
-# ugly hack to import translationcheck
-# from http://stackoverflow.com/questions/4542352/import-from-sibling-directory
-import os
-import inspect
-os.sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))
 
-import translationcheck
+from lib import translationcheck
 
 # TODO: Add a test for parseargs(), printit() if possible
 
@@ -91,8 +86,14 @@ class GetresultsTestCase(unittest.TestCase):
 
         results_us_de = translationcheck.getresults("unity-scope-remmina", "German")
         self.assertEqual(results_us_de, ('0', '0'))
+        results_us_de_ns = translationcheck.getresults("unity-scope-snappy", "German")
+        self.assertEqual(results_us_de_ns, ('lnf', 'lnf'))
         results_us_ch = translationcheck.getresults("unity-scope-remmina", "Chinese (Simplified)")
         self.assertEqual(results_us_ch, ('lnf', 'lnf'))
+        results_us_uy = translationcheck.getresults("unity-scope-zotero", "Uyghur")
+        self.assertEqual(results_us_uy, ('7', '0'))
+        results_us_al = translationcheck.getresults("unity-scope-click", "Albanian")
+        self.assertEqual(results_us_al, ('52', '39'))
 
     def test_getresults_ubuntu(self):
         '''Test the function to parse the webpages for ubuntu'''
@@ -101,6 +102,8 @@ class GetresultsTestCase(unittest.TestCase):
         self.assertEqual(results_u_de, ('0', '0'))
         results_u_uk = translationcheck.getresults("ubuntu-keyboard", "English (United Kingdom)")
         self.assertEqual(results_u_uk, ('0', '0'))
+        results_u_de_error = translationcheck.getresults("nopenotthere", "German")
+        self.assertEqual(results_u_de_error, ('error', 'error'))
 
 if __name__ == '__main__':
     unittest.main()
