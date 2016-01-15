@@ -14,6 +14,8 @@ and then
 
 to see all options.
 
+If do not specify a language, you will be ask and it will be saved in ".conf.ini".
+
 Examples:
 
 	python3 translationcheck.py -uesl French
@@ -27,8 +29,6 @@ Examples:
 To updates this script just run:
 
 	git pull -r
-
-(Note: Currently German is the default language! You can change this in line 26 in translationcheck.py)
 
 There is also a bash script which does the same thing, and has mostly the same short options.
 

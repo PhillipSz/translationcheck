@@ -7,7 +7,7 @@ import logging
 import concurrent.futures
 import os
 
-from lib import translationcheck as tc # There are our functions
+from lib import translationcheck as tc
 
 def parseargs():
     '''Parse the arguments'''
@@ -21,8 +21,9 @@ def parseargs():
     parser.add_argument("--update", help="checks for new translatable apps \
                          from elementary/unity-scopes and saves them", action="store_true")
     parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
-    parser.add_argument("-l", "--language", type=str, default='German',
-                        help='let you specify a language, e.g. German, Greek or "English (United Kingdom)"')
+    parser.add_argument("-l", "--language", type=str,
+                        help='let you specify a language, e.g. German, Greek or "English (United Kingdom)". \
+                              If you have not specified a language, the config from ".conf.ini" will be used.')
     args = parser.parse_args()
 
     if args.verbose:
@@ -57,6 +58,9 @@ def main():
 
     if results:
         print("Let's see what needs work…")
+
+        if not language:
+            language = tc.readconfig()
 
         results = tc.getapps(results)
         for project, apps in results.items():

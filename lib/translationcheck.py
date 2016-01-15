@@ -2,11 +2,26 @@
 import re
 import webbrowser
 import logging
+import configparser
+
 try:
     import requests
 except ImportError:
     print('Please install requests first with "sudo pip install requests"!')
     raise SystemExit(1)
+
+def readconfig():
+    config = configparser.ConfigParser()
+    config.read('.conf.ini')
+    language = config['DEFAULT']['language']
+    if not language:
+        language = input("Please enter your language (can be changed later in '.conf.ini'): ")
+        config['DEFAULT']['language'] = language
+        with open('.conf.ini', 'w') as configfile:
+            config.write(configfile)
+        return language
+    else:
+        return language
 
 def updateapplists():
     '''Updates the list of apps in data/'''
