@@ -62,6 +62,10 @@ def main():
         if not language:
             language = tc.readconfig()
 
+        if language.islower():
+            print('Error: You must capitalize the language, just as they are written in launchpad!')
+            raise SystemExit(1)
+
         results = tc.getapps(results)
         for project, apps in results.items():
             with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
