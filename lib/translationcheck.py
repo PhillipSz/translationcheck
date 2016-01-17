@@ -62,7 +62,7 @@ def getresults(app, language):
     res = re.search(regex, page, flags=re.DOTALL)
     logging.info("%s downloaded!\n", app)
     try:
-        return res.group(1), res.group(2)
+        return int(res.group(1)), int(res.group(2))
     except AttributeError:
         logging.info("We have a problem with parsing %s\n", app)
         return 'lnf', 'lnf' # language not found
@@ -88,13 +88,13 @@ def printit(results, language, openb):
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 print(yellow, "This app probably has no translations in", language, "yet!", end)
-            elif result[0] == "0" and result[1] == "0":
+            elif result[0] == 0 and result[1] == 0:
                 continue
             else:
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
-                if result[0] != "0":
+                if result[0] != 0:
                     print(red, result[0], "untranslated", end)
-                if result[1] != "0":
+                if result[1] != 0:
                     print(green, result[1], "new suggestion(s)", end)

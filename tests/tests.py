@@ -73,35 +73,35 @@ class GetresultsTestCase(unittest.TestCase):
         '''Test the function to parse the webpages for elementary'''
 
         results_e_de = translationcheck.getresults("pantheon-calculator", "German")
-        self.assertEqual(results_e_de, ('0', '0'))
+        self.assertEqual(results_e_de, (0, 0))
         results_e_de_error = translationcheck.getresults("this-is-not-an-app-:)", "German")
         self.assertEqual(results_e_de_error, ('error', 'error'))
         results_e_nor = translationcheck.getresults("pantheon-calculator", "Norwegian Bokmal")
-        self.assertEqual(results_e_nor, ('0', '0'))
+        self.assertEqual(results_e_nor, (0, 0))
         results_e_ch = translationcheck.getresults("pantheon-calculator", "Chinese (Simplified)")
-        self.assertEqual(results_e_ch, ('0', '0'))
+        self.assertEqual(results_e_ch, (0, 0))
 
     def test_getresults_unityscopes(self):
         '''Test the function to parse the webpages for unity-scopes'''
 
         results_us_de = translationcheck.getresults("unity-scope-remmina", "German")
-        self.assertEqual(results_us_de, ('0', '0'))
+        self.assertEqual(results_us_de, (0, 0))
         results_us_de_ns = translationcheck.getresults("unity-scope-snappy", "German")
         self.assertEqual(results_us_de_ns, ('lnf', 'lnf'))
         results_us_ch = translationcheck.getresults("unity-scope-remmina", "Chinese (Simplified)")
         self.assertEqual(results_us_ch, ('lnf', 'lnf'))
         results_us_uy = translationcheck.getresults("unity-scope-zotero", "Uyghur")
-        self.assertEqual(results_us_uy, ('7', '0'))
+        self.assertEqual(results_us_uy, (7, 0))
         results_us_al = translationcheck.getresults("unity-scope-click", "Albanian")
-        self.assertEqual(results_us_al, ('52', '39'))
+        self.assertEqual(results_us_al, (52, 39))
 
     def test_getresults_ubuntu(self):
         '''Test the function to parse the webpages for ubuntu'''
 
         results_u_de = translationcheck.getresults("ubuntu-keyboard", "German")
-        self.assertEqual(results_u_de, ('0', '0'))
+        self.assertEqual(results_u_de, (0, 0))
         results_u_uk = translationcheck.getresults("ubuntu-keyboard", "English (United Kingdom)")
-        self.assertEqual(results_u_uk, ('0', '0'))
+        self.assertEqual(results_u_uk, (0, 0))
         results_u_de_error = translationcheck.getresults("nopenotthere", "German")
         self.assertEqual(results_u_de_error, ('error', 'error'))
 
