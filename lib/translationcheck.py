@@ -7,7 +7,7 @@ import configparser
 try:
     import requests
 except ImportError:
-    print('Please install requests first with "sudo pip install requests"!')
+    print('Please install requests with "sudo pip3 install requests"!')
     raise SystemExit(1)
 
 def readconfig():

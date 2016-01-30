@@ -23,7 +23,7 @@ def parseargs():
     parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
     parser.add_argument("-l", "--language", type=str,
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)". \
-                              If you have not specified a language, the config from ".conf.ini" will be used.')
+                              If you have not specified a language, the configuration from ".conf.ini" will be used.')
     args = parser.parse_args()
 
     if args.verbose:
@@ -63,7 +63,8 @@ def main():
             language = tc.readconfig()
 
         if language.islower():
-            print('Error: You must capitalize the language, just as they are written in launchpad!')
+            print('Error: You must capitalize the language, just as they are written in launchpad!\n' +
+                  'Either specify a valid language with -l or change your language in ".conf.ini".')
             raise SystemExit(1)
 
         results = tc.getapps(results)

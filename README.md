@@ -4,7 +4,7 @@ translationcheck for Launchpad
 
 Just run
 
-	sudo pip install requests
+	sudo pip3 install requests
 
 	git clone https://github.com/PhillipSz/translationcheck && cd translationcheck
 
@@ -14,7 +14,7 @@ and then
 
 to see all options.
 
-If do not specify a language, you will be ask and it will be saved in ".conf.ini".
+If you do not specify a language, you will be ask to and then it will be saved in ".conf.ini".
 
 Examples:
 
@@ -26,11 +26,11 @@ Examples:
 
 	python3 translationcheck.py --update
 
-To updates this script just run:
+To update this script just run:
 
 	git pull -r
 
-There is also a bash script which does the same thing, and has mostly the same short options.
+There is also a old bash script which does the same thing, and has mostly the same short options.
 
 -------------------------------------------------------------------------------------------------------------------------
 
