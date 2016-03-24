@@ -3,6 +3,8 @@ import re
 import webbrowser
 import logging
 import configparser
+import os
+from copy import deepcopy
 
 try:
     import requests
@@ -11,6 +13,7 @@ except ImportError:
     raise SystemExit(1)
 
 def readconfig():
+    '''Reads the config file and also askes if there is none'''
     config = configparser.ConfigParser()
     config.read('.conf.ini')
 
@@ -66,6 +69,91 @@ def getresults(app, language):
     except AttributeError:
         logging.info("We have a problem with parsing %s\n", app)
         return 'lnf', 'lnf' # language not found
+
+def chart(results):
+    ''''Opens a new tab with a translation chart from the results.
+        If multiple projects are given it will put it all together'''
+    projects = []
+    ut = []
+    nr = []
+    usefull_results = deepcopy(results) # we must use deepcopy here, because otherwise we will get an runtime error
+
+    for project, apps in results.items():
+        for app, result in apps.items():
+            if result[0] in (0, "error", "lnf") and result[1] in (0, "error", "lnf"):
+                del usefull_results[project][app]
+
+    for project, apps in usefull_results.items():
+        for app, result in apps.items():
+            projects.append(app)
+            ut.append(result[0])
+            nr.append(result[1])
+
+    projects = 'labels : ' + str(projects) + ','
+    ut = ','.join(str(e) for e in ut)
+    ut = 'data : [' + ut + ']'
+    nr = ','.join(str(e) for e in nr)
+    nr = 'data : [' + nr + ']'
+
+    page1 = '''
+    <!doctype html>
+    <html>
+    	<head>
+    		<title>Bar Chart</title>
+    		<script src="Chart.min.js"></script>
+    	</head>
+    	<body>
+            Translation chart (first column: untranslated, second column: need review):
+    		<div style="width: 100%">
+    			<canvas id="canvas" height="250" width="600"></canvas>
+    		</div>
+
+    	<script>
+
+    	var barChartData = {
+        '''
+
+    page2 = '''
+    	datasets : [
+    			{
+    				label: "ut",
+                    scaleShowLabels: true,
+    				fillColor : "rgba(220,220,220,0.5)",
+    				strokeColor : "rgba(220,220,220,0.8)",
+    				highlightFill: "rgba(220,220,220,0.75)",
+    				highlightStroke: "rgba(220,220,220,1)",
+                    '''
+
+    page3 = '''},
+    			{
+    				label: "nr",
+                    scaleShowLabels: true,
+    				fillColor : "rgba(151,187,205,0.5)",
+    				strokeColor : "rgba(151,187,205,0.8)",
+    				highlightFill : "rgba(151,187,205,0.75)",
+    				highlightStroke : "rgba(151,187,205,1)",
+                    '''
+
+    page4 = '''}
+    		]
+
+    	}
+    	window.onload = function(){
+    		var ctx = document.getElementById("canvas").getContext("2d");
+    		window.myBar = new Chart(ctx).Bar(barChartData, {
+    			responsive : true,
+    		});
+    	}
+
+    	</script>
+    	</body>
+    </html>
+    '''
+
+    with open("data/diagram.html", 'w') as html_file:
+        html_file.write(page1 + projects + page2 + ut + page3 + nr + page4)
+
+    webbrowser.open("file://" + os.getcwd() + "/data/diagram.html")
 
 def printit(results, language, openb):
     '''Print it in a fancy way'''

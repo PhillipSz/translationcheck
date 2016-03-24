@@ -21,6 +21,7 @@ def parseargs():
     parser.add_argument("--update", help="checks for new translatable apps \
                          from elementary/unity-scopes and saves them", action="store_true")
     parser.add_argument("-v", "--verbose", help="be verbose", action="store_true")
+    parser.add_argument("-c", "--chart", help="be verbose", action="store_true")
     parser.add_argument("-l", "--language", type=str,
                         help='let you specify a language, e.g. German, Greek or "English (United Kingdom)". \
                               If you have not specified a language, the configuration from ".conf.ini" will be used.')
@@ -41,11 +42,11 @@ def parseargs():
         parser.print_help()
         raise SystemExit(1)
 
-    return args.update, args.language, args.open, results
+    return args.update, args.language, args.open, args.chart, results
 
 def main():
     '''This main function calls all other functions and also is responsible for running all the downloads at the same time'''
-    update, language, openb, results = parseargs()
+    update, language, openb, chart, results = parseargs()
 
     if update:
         dict_of_apps = tc.updateapplists()
@@ -76,6 +77,9 @@ def main():
                     rest = future.result()
                     results[project][app] = rest
         tc.printit(results, language, openb)
+
+        if chart:
+            tc.chart(results)
 
 if __name__ == "__main__":
     main()
