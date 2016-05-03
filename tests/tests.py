@@ -42,6 +42,22 @@ class Updateapplists(unittest.TestCase):
                 self.assertFalse('unity-scope-snappy' in apps)
                 self.assertFalse('unity-scope-piratebay' in apps)
 
+    def test_if_everything_updated(self):
+        '''Test if all files in data/ are updated'''
+        results = {'elementary': {}, 'unity-scopes': {}}
+        results = translationcheck.getapps(results)
+        # We must convert both results and dict_of_apps to a list, because they differ in their structure
+        results_list = []
+        for project, apps in results.items():
+            results_list.append(apps)
+
+        dict_of_apps = translationcheck.updateapplists()
+        dict_of_apps_list = []
+        for project, apps in results.items():
+            dict_of_apps_list.append(apps)
+
+        self.assertEqual(results_list, dict_of_apps_list)
+
 class GetappsTestCase(unittest.TestCase):
     '''Tests for getapps.'''
 
@@ -100,7 +116,7 @@ class GetresultsTestCase(unittest.TestCase):
 
         results_u_de = translationcheck.getresults("ubuntu-keyboard", "German")
         self.assertEqual(results_u_de, (0, 0))
-        results_u_uk = translationcheck.getresults("ubuntu-keyboard", "English (United Kingdom)")
+        results_u_uk = translationcheck.getresults("twitter-scope", "English (United Kingdom)")
         self.assertEqual(results_u_uk, (0, 0))
         results_u_de_error = translationcheck.getresults("nopenotthere", "German")
         self.assertEqual(results_u_de_error, ('error', 'error'))
