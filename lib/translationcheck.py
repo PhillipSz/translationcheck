@@ -95,59 +95,62 @@ def chart(results):
     nr = ','.join(str(e) for e in nr)
     nr = 'data : [' + nr + ']'
 
+    # Parts of this code are from https://github.com/chartjs/Chart.js/blob/master/samples/bar-horizontal.html which is MIT
     page1 = '''
-    <!doctype html>
-    <html>
-    	<head>
-    		<title>Bar Chart</title>
-    		<script src="Chart.min.js"></script>
-    	</head>
-    	<body>
-            Translation chart (first column: untranslated, second column: need review):
-    		<div style="width: 100%">
-    			<canvas id="canvas" height="250" width="600"></canvas>
-    		</div>
+        <!doctype html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Horizontal Bar Chart</title>
+            <script src="Chart.min.js"></script>
+        </head>
 
-    	<script>
+        <body>
+            <div id="container" style="width: 90%;">
+                <canvas id="canvas"></canvas>
+            </div>
 
-    	var barChartData = {
+            <script>
+
+                var horizontalBarChartData = {
         '''
 
     page2 = '''
-    	datasets : [
-    			{
-    				label: "ut",
-                    scaleShowLabels: true,
-    				fillColor : "rgba(220,220,220,0.5)",
-    				strokeColor : "rgba(220,220,220,0.8)",
-    				highlightFill: "rgba(220,220,220,0.75)",
-    				highlightStroke: "rgba(220,220,220,1)",
-                    '''
-
+            datasets: [{
+                label: 'untranslated',
+                backgroundColor: "rgba(20, 25, 238, 0.7)",
+                '''
     page3 = '''},
-    			{
-    				label: "nr",
-                    scaleShowLabels: true,
-    				fillColor : "rgba(151,187,205,0.5)",
-    				strokeColor : "rgba(151,187,205,0.8)",
-    				highlightFill : "rgba(151,187,205,0.75)",
-    				highlightStroke : "rgba(151,187,205,1)",
+            {
+                label: 'needs review',
+                backgroundColor: "rgba(236, 11, 32, 0.7)",
                     '''
 
-    page4 = '''}
-    		]
+    page4 = '''}]
 
-    	}
-    	window.onload = function(){
-    		var ctx = document.getElementById("canvas").getContext("2d");
-    		window.myBar = new Chart(ctx).Bar(barChartData, {
-    			responsive : true,
-    		});
-    	}
+            };
+                window.onload = function() {
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                    window.myHorizontalBar = new Chart(ctx, {
+                        type: 'horizontalBar',
+                        data: horizontalBarChartData,
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Translations Chart'
+                            }
+                        }
+                    });
 
-    	</script>
-    	</body>
-    </html>
+                };
+
+            </script>
+        </body>
+        </html>
     '''
 
     with open("data/diagram.html", 'w') as html_file:
