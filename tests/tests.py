@@ -88,14 +88,14 @@ class GetresultsTestCase(unittest.TestCase):
     def test_getresults_elementary(self):
         '''Test the function to parse the webpages for elementary'''
 
-        results_e_de = translationcheck.getresults("pantheon-calculator", "German")
-        self.assertEqual(results_e_de, (0, 0))
+        results_e_ko = translationcheck.getresults("pantheon-calculator", "Korean")
+        self.assertEqual(results_e_ko, (0, 0))
         results_e_de_error = translationcheck.getresults("this-is-not-an-app-:)", "German")
         self.assertEqual(results_e_de_error, ('error', 'error'))
         results_e_nor = translationcheck.getresults("pantheon-calculator", "Norwegian Bokmal")
-        self.assertEqual(results_e_nor, (0, 0))
+        self.assertEqual(results_e_nor, (4, 0))
         results_e_ch = translationcheck.getresults("pantheon-calculator", "Chinese (Simplified)")
-        self.assertEqual(results_e_ch, (0, 0))
+        self.assertEqual(results_e_ch, (4, 0))
 
     def test_getresults_unityscopes(self):
         '''Test the function to parse the webpages for unity-scopes'''
