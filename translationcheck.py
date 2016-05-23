@@ -63,7 +63,8 @@ def main():
         if not language:
             language = tc.readconfig()
 
-        if language.islower():
+        # We must check this here, as tc.readconfig() can be garbage
+        if language.islower() or not language :
             print('Error: You must capitalize the language, just as they are written in launchpad!\n' +
                   'Either specify a valid language with -l or change your language in ".conf.ini".')
             raise SystemExit(1)

@@ -7,7 +7,7 @@ import unittest
 
 from lib import translationcheck
 
-# TODO: Add a test for parseargs(), printit() if possible
+# TODO: Add a test to check usage of .conf.ini/have an integration test
 
 class Updateapplists(unittest.TestCase):
     '''Tests for updateapplists'''
