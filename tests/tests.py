@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 #
-# Just use "python -m unittest discover -v" to see what happens
+# Just use "python3 -m unittest discover -v" to see what happens
 #
 '''Tests for translationcheck'''
 import unittest
+import subprocess
 
 from lib import translationcheck
 
-# TODO: Add a test to check usage of .conf.ini/have an integration test
+# TODO: - Add a test to check usage of .conf.ini
+#       - What about fuzzing: https://alexgaynor.net/2015/apr/13/introduction-to-fuzzing-in-python-with-afl/ ?
+#
+# @unittest.skip("demonstrating skipping")
 
 class Updateapplists(unittest.TestCase):
     '''Tests for updateapplists'''
@@ -48,14 +52,20 @@ class Updateapplists(unittest.TestCase):
         results = translationcheck.getapps(results)
         # We must convert both results and dict_of_apps to a list, because they differ in their structure
         results_list = []
-        for project, apps in results.items():
-            results_list.append(apps)
+        for _, apps in results.items():
+            for app, _ in apps.items():
+                results_list.append(app)
 
         dict_of_apps = translationcheck.updateapplists()
         dict_of_apps_list = []
-        for project, apps in results.items():
+
+        for _, apps in dict_of_apps.items():
             dict_of_apps_list.append(apps)
 
+        # Convert to one list only
+        dict_of_apps_list = [item for sublist in dict_of_apps_list for item in sublist]
+        results_list.sort()
+        dict_of_apps_list.sort()
         self.assertEqual(results_list, dict_of_apps_list)
 
 class GetappsTestCase(unittest.TestCase):
@@ -95,7 +105,7 @@ class GetresultsTestCase(unittest.TestCase):
         results_e_nor = translationcheck.getresults("pantheon-calculator", "Norwegian Bokmal")
         self.assertEqual(results_e_nor, (4, 0))
         results_e_ch = translationcheck.getresults("pantheon-calculator", "Chinese (Simplified)")
-        self.assertEqual(results_e_ch, (4, 0))
+        self.assertEqual(results_e_ch, (0, 0))
 
     def test_getresults_unityscopes(self):
         '''Test the function to parse the webpages for unity-scopes'''
@@ -121,5 +131,31 @@ class GetresultsTestCase(unittest.TestCase):
         results_u_de_error = translationcheck.getresults("nopenotthere", "German")
         self.assertEqual(results_u_de_error, ('error', 'error'))
 
+@unittest.skipUnless(hasattr(subprocess, 'run'), "Test skipped for older python version")
+class IntegrationTestCase(unittest.TestCase):
+    '''Test if all the commands work together'''
+
+    def test_help(self):
+        '''Test if we show the help page correctly '''
+        output1 = subprocess.run(["python3", "translationcheck.py"], stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        output2 = subprocess.run(["python3", "translationcheck.py", "--help", "--update"], stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        output3 = subprocess.run(["./translationcheck.py"], shell=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        output4 = subprocess.run(["./translationcheck.py -huec"], shell=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        output5 = subprocess.run(["python3", "translationcheck.py", "-cvo"], stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+
+        self.assertTrue(output1.returncode == output3.returncode == output5.returncode) # status_code = 1
+        self.assertEqual(output2.returncode, output4.returncode) # status_code = 0
+        self.assertTrue(output1.stdout == output2.stdout == output3.stdout == output4.stdout == output5.stdout)
+
+    def test_arguments_returncode(self):
+        '''Test if we get an zero exit status if we use all arguments'''
+        output1 = subprocess.run(["python3", "translationcheck.py", "-uesvl", "French"], stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        self.assertEqual(output1.returncode, 0)
 if __name__ == '__main__':
     unittest.main()
