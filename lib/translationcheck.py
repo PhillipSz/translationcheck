@@ -161,10 +161,9 @@ def chart(results):
 def printit(results, language, openb):
     '''Print it in a fancy way'''
     # colors
-    yellow = '\033[93m'
-    red = '\033[91m'
-    green = '\033[92m'
-    end = '\033[0m'
+    print_red = lambda *text: print('\033[91m', *text, '\033[0m')
+    print_green = lambda *text: print('\033[92m', *text, '\033[0m')
+    print_yellow = lambda *text: print('\033[93m', *text, '\033[0m')
 
     for project, apps in results.items():
         print("\nFor", project, "in", language, "we have the following results:")
@@ -172,13 +171,13 @@ def printit(results, language, openb):
         for app, result in apps.items():
             if result[0] == "error":
                 print('\n' + app + ":")
-                print(yellow, "There is something wrong with", app + ".\n",
-                      "Most likely the project moved to a different location.", end)
+                print_yellow("There is something wrong with", app + ".\n",
+                             "Most likely the project moved to a different location.")
             elif result[0] == "lnf":
                 if openb:
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
-                print(yellow, "This app probably has no translations in", language, "yet!", end)
+                print_yellow("This app probably has no translations in", language, "yet!")
             elif result[0] == 0 and result[1] == 0:
                 continue
             else:
@@ -186,6 +185,6 @@ def printit(results, language, openb):
                     webbrowser.open("https://launchpad.net/" + app + "/+translations")
                 print('\n' + app + ":")
                 if result[0] != 0:
-                    print(red, result[0], "untranslated", end)
+                    print_red(result[0], "untranslated")
                 if result[1] != 0:
-                    print(green, result[1], "new suggestion(s)", end)
+                    print_green(result[1], "new suggestion(s)")

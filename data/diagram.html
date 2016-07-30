@@ -1,0 +1,51 @@
+
+        <!doctype html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Horizontal Bar Chart</title>
+            <script src="Chart.min.js"></script>
+        </head>
+
+        <body>
+            <div id="container" style="width: 90%;">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <script>
+
+                var horizontalBarChartData = {
+        labels : ['switchboard-plug-onlineaccounts', 'snap-elementary', 'switchboard-plug-datetime', 'gala', 'switchboard-plug-networking', 'audience', 'pantheon-photos', 'pantheon-mail', 'noise', 'switchboard-plug-keyboard', 'switchboard-plug-power', 'pantheon-files'],
+            datasets: [{
+                label: 'untranslated',
+                backgroundColor: "rgba(20, 25, 238, 0.7)",
+                data : [8,4,119,1,9,2,2,9,13,2,0,2]},
+            {
+                label: 'needs review',
+                backgroundColor: "rgba(236, 11, 32, 0.7)",
+                    data : [0,1,0,0,0,0,0,0,0,0,4,0]}]
+
+            };
+                window.onload = function() {
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                    window.myHorizontalBar = new Chart(ctx, {
+                        type: 'horizontalBar',
+                        data: horizontalBarChartData,
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Translations Chart'
+                            }
+                        }
+                    });
+
+                };
+
+            </script>
+        </body>
+        </html>
+    
