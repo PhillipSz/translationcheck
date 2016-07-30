@@ -14,7 +14,7 @@ and then
 
 to see all options.
 
-If you do not specify a language, you will be ask to and then it will be saved in ".conf.ini".
+If you do not specify a language, you will be ask to do so and this will be saved in ".conf.ini".
 
 Examples:
 
@@ -30,8 +30,8 @@ To update this script just run:
 
 	git pull -r
 
-There is also a old bash script which does the same thing, and has mostly the same short options.
+There is also a old bash script which does the same thing and has mostly the same short options.
 
--------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
 
 Report bugs to https://github.com/PhillipSz/translationcheck/issues

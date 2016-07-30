@@ -9,20 +9,19 @@ import subprocess
 from lib import translationcheck
 
 # TODO: - Add a test to check usage of .conf.ini
-#       - What about fuzzing: https://alexgaynor.net/2015/apr/13/introduction-to-fuzzing-in-python-with-afl/ ?
 #
 # @unittest.skip("demonstrating skipping")
 
 class Updateapplists(unittest.TestCase):
-    '''Tests for updateapplists'''
+    '''Tests for updateapplists()'''
     def test_updateapplists(self):
-        '''Test if we get an empty dict back (don't know if that test is useful) '''
+        '''Test if updateapplists() gives us an empty dict back'''
         dict_of_apps = translationcheck.updateapplists()
         self.assertTrue(dict_of_apps)
         self.assertTrue(isinstance(dict_of_apps, dict))
 
-    def test_check_if_false_app_elementary(self):
-        '''Test if the function does gives us an elementary app that is not translatable'''
+    def test_false_app_elementary(self):
+        '''Test if updateapplists() gives us an elementary app that is not translatable'''
         dict_of_apps = translationcheck.updateapplists()
 
         for project, apps in dict_of_apps.items():
@@ -34,13 +33,13 @@ class Updateapplists(unittest.TestCase):
                 self.assertTrue('scratch' in apps)
                 self.assertTrue('switchboard' in apps)
 
-    def test_check_if_false_app_unityscopes(self):
-        '''Test if the function does gives us a unity scope that is not translatable'''
+    def test_false_app_unityscopes(self):
+        '''Test if updateapplists() gives us a unity scope that is not translatable'''
         dict_of_apps = translationcheck.updateapplists()
 
         for project, apps in dict_of_apps.items():
             if project == 'unity-scopes':
-                self.assertTrue('unity-scope-isgd' in apps) # it's called: "Unity is.gd Scope" that's why we should test that
+                self.assertTrue('unity-scope-isgd' in apps)
                 self.assertTrue('unity-scope-zotero' in apps)
                 self.assertTrue('unity-scope-ubuntushop' in apps)
                 self.assertFalse('unity-scope-snappy' in apps)
@@ -50,7 +49,8 @@ class Updateapplists(unittest.TestCase):
         '''Test if all files in data/ are updated'''
         results = {'elementary': {}, 'unity-scopes': {}}
         results = translationcheck.getapps(results)
-        # We must convert both results and dict_of_apps to a list, because they differ in their structure
+        # We must convert both results and dict_of_apps to a list,
+        # because they differ in their structure
         results_list = []
         for _, apps in results.items():
             for app, _ in apps.items():
@@ -69,10 +69,10 @@ class Updateapplists(unittest.TestCase):
         self.assertEqual(results_list, dict_of_apps_list)
 
 class GetappsTestCase(unittest.TestCase):
-    '''Tests for getapps.'''
+    '''Tests for getapps().'''
 
     def test_get_apps(self):
-        '''Test the function to parse the apps to check'''
+        '''Test getapps() to parse the apps to check'''
 
         results = {'elementary': {}, 'ubuntu': {}, 'unity-scopes': {}}
         results = translationcheck.getapps(results)
@@ -94,42 +94,27 @@ class GetresultsTestCase(unittest.TestCase):
     '''Tests for getresults().
        I just choose these at random and with the hope that they don't change that much.'''
 
-    # we only test for 0 and error and elnf here, as the rest can change fast
-    def test_getresults_elementary(self):
-        '''Test the function to parse the webpages for elementary'''
+    def setUp(self):
+        self.results_list = {"pantheon-agent-polkit" : {"Brazilian Portuguese" : (0, 0)},
+                             "this-is-not-an-app-:)" : {"German" : ('error', 'error')},
+                             "pantheon-calculator" : {"Norwegian Bokmal":  (4, 0)},
+                             "capnet-assist" : {"Chinese (Simplified)":  (0, 0)},
+                             "unity-scope-isgd" : {"German":  (0, 0)},
+                             "unity-scope-phpdoc" : {"Portuguese":  (0, 0)},
+                             "unity-scope-snappy" : {"German":  ('lnf', 'lnf')},
+                             "unity-scope-remmina" : {"Chinese (Simplified)":  ('lnf', 'lnf')},
+                             "unity-scope-zotero" : {"Uyghur":  (7, 0)},
+                             "unity-scope-click" : {"Albanian":  (52, 39)},
+                             "ubuntu-keyboard" : {"German":  (0, 0)},
+                             "twitter-scope" : {"English (United Kingdom)":  (0, 0)},
+                             "nopenotthere" : {"English (United Kingdom)":  ('error', 'error')}}
 
-        results_e_ko = translationcheck.getresults("pantheon-calculator", "Korean")
-        self.assertEqual(results_e_ko, (0, 0))
-        results_e_de_error = translationcheck.getresults("this-is-not-an-app-:)", "German")
-        self.assertEqual(results_e_de_error, ('error', 'error'))
-        results_e_nor = translationcheck.getresults("pantheon-calculator", "Norwegian Bokmal")
-        self.assertEqual(results_e_nor, (4, 0))
-        results_e_ch = translationcheck.getresults("pantheon-calculator", "Chinese (Simplified)")
-        self.assertEqual(results_e_ch, (0, 0))
-
-    def test_getresults_unityscopes(self):
-        '''Test the function to parse the webpages for unity-scopes'''
-
-        results_us_de = translationcheck.getresults("unity-scope-remmina", "German")
-        self.assertEqual(results_us_de, (0, 0))
-        results_us_de_ns = translationcheck.getresults("unity-scope-snappy", "German")
-        self.assertEqual(results_us_de_ns, ('lnf', 'lnf'))
-        results_us_ch = translationcheck.getresults("unity-scope-remmina", "Chinese (Simplified)")
-        self.assertEqual(results_us_ch, ('lnf', 'lnf'))
-        results_us_uy = translationcheck.getresults("unity-scope-zotero", "Uyghur")
-        self.assertEqual(results_us_uy, (7, 0))
-        results_us_al = translationcheck.getresults("unity-scope-click", "Albanian")
-        self.assertEqual(results_us_al, (52, 39))
-
-    def test_getresults_ubuntu(self):
-        '''Test the function to parse the webpages for ubuntu'''
-
-        results_u_de = translationcheck.getresults("ubuntu-keyboard", "German")
-        self.assertEqual(results_u_de, (0, 0))
-        results_u_uk = translationcheck.getresults("twitter-scope", "English (United Kingdom)")
-        self.assertEqual(results_u_uk, (0, 0))
-        results_u_de_error = translationcheck.getresults("nopenotthere", "German")
-        self.assertEqual(results_u_de_error, ('error', 'error'))
+    def test_getresults(self):
+        '''Test projects with getresults()'''
+        for project, apps in self.results_list.items():
+            for lang, results_wanted in apps.items():
+                results = translationcheck.getresults(project, lang)
+                self.assertEqual(results, results_wanted)
 
 @unittest.skipUnless(hasattr(subprocess, 'run'), "Test skipped for older python version")
 class IntegrationTestCase(unittest.TestCase):
@@ -154,8 +139,9 @@ class IntegrationTestCase(unittest.TestCase):
 
     def test_arguments_returncode(self):
         '''Test if we get an zero exit status if we use all arguments'''
-        output1 = subprocess.run(["python3", "translationcheck.py", "-uesvl", "French"], stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT, universal_newlines=True)
+        output1 = subprocess.run(["python3", "translationcheck.py", "-uesvl", "French"],
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
         self.assertEqual(output1.returncode, 0)
+
 if __name__ == '__main__':
     unittest.main()
