@@ -161,9 +161,12 @@ def chart(results):
 def printit(results, language, openb):
     '''Print it in a fancy way'''
     # colors
-    print_red = lambda *text: print('\033[91m', *text, '\033[0m')
-    print_green = lambda *text: print('\033[92m', *text, '\033[0m')
-    print_yellow = lambda *text: print('\033[93m', *text, '\033[0m')
+    def print_red(*text):
+        print('\033[91m', *text, '\033[0m')
+    def print_green(*text):
+        print('\033[92m', *text, '\033[0m')
+    def print_yellow(*text):
+        print('\033[93m', *text, '\033[0m')
 
     for project, apps in results.items():
         print("\nFor", project, "in", language, "we have the following results:")
