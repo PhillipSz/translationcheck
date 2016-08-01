@@ -2,6 +2,10 @@ translationcheck for Launchpad
 ==============================
 [![Build Status](https://travis-ci.org/PhillipSz/translationcheck.png)](https://travis-ci.org/PhillipSz/translationcheck)
 
+You need at least python 3.5 to use this script, have a look at:
+
+	python3 --version
+
 Just run
 
 	sudo pip3 install requests

@@ -5,7 +5,6 @@
 import argparse
 import logging
 import concurrent.futures
-import os
 
 from lib import translationcheck as tc
 
@@ -64,14 +63,14 @@ def main():
             language = tc.readconfig()
 
         # We must check this here, as tc.readconfig() can be garbage
-        if language.islower() or not language :
+        if language.islower() or not language:
             print('Error: You must capitalize the language, just as they are written in launchpad!\n' +
                   'Either specify a valid language with -l or change your language in ".conf.ini".')
             raise SystemExit(1)
 
         results = tc.getapps(results)
         for project, apps in results.items():
-            with concurrent.futures.ThreadPoolExecutor(max_workers=(os.cpu_count() or 1) * 5) as executor:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_to_app = {executor.submit(tc.getresults, app, language): app for app, _ in apps.items()}
                 for future in concurrent.futures.as_completed(future_to_app):
                     app = future_to_app[future]

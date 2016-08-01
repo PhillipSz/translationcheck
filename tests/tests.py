@@ -116,7 +116,6 @@ class GetresultsTestCase(unittest.TestCase):
                 results = translationcheck.getresults(project, lang)
                 self.assertEqual(results, results_wanted)
 
-@unittest.skipUnless(hasattr(subprocess, 'run'), "Test skipped for older python version")
 class IntegrationTestCase(unittest.TestCase):
     '''Test if all the commands work together'''
 

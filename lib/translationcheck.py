@@ -4,6 +4,7 @@ import webbrowser
 import logging
 import configparser
 import os
+import sys
 from copy import deepcopy
 
 try:
@@ -11,6 +12,9 @@ try:
 except ImportError:
     print('Please install requests with "sudo pip3 install requests"!')
     raise SystemExit(1)
+
+if sys.version_info <= (3, 5):
+    raise "You must use python 3.5 or greater! Sorry!"
 
 def readconfig():
     '''Reads the config file and also askes if there is none'''
