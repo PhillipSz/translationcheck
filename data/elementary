@@ -23,6 +23,7 @@ switchboard
 switchboard-plug-a11y
 switchboard-plug-about
 switchboard-plug-applications
+switchboard-plug-bluetooth
 switchboard-plug-datetime
 switchboard-plug-display
 switchboard-plug-keyboard
